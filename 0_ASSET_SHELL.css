@@ -1,0 +1,55 @@
+/*
+   BA DMO visual shell
+   Shared by the visual-authority pages. Page files own content and module
+   layout; this file owns the common frame, navigation, surfaces and controls.
+*/
+:root{
+  --shell-page:var(--dmo-page,#f6f9fc);
+  --shell-surface:var(--dmo-card,#fff);
+  --shell-subtle:var(--dmo-subtle,#f1f6fa);
+  --shell-line:var(--dmo-border,#d9e6f2);
+  --shell-text:var(--dmo-text,#172d42);
+  --shell-muted:var(--dmo-muted,#64778a);
+  --shell-blue:var(--dmo-brand-600,#3c73a8);
+  --shell-blue-dark:var(--dmo-brand-950,#0f1d2a);
+  --shell-rail:276px;
+  --shell-radius:var(--dmo-radius-card,12px);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--shell-page);color:var(--shell-text);font:16px/1.45 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* Application frame */
+.app-header,.dmo-app-header{min-height:var(--dmo-header-height,76px);display:flex;align-items:center;gap:13px;padding:10px 28px;background:var(--shell-surface);border-bottom:1px solid var(--shell-line)}
+.app-header .brand-mark,.brand-mark{display:grid;place-items:center;width:44px;height:44px;flex:0 0 auto;border-radius:50%;background:var(--shell-blue);color:#fff;font-weight:850}
+.app-header .brand-copy,.brand-copy{min-width:0}
+.app-header .brand-copy strong,.brand-copy strong{display:block;font-size:20px;line-height:1.2}
+.app-header .brand-copy span,.brand-copy span{display:block;margin-top:3px;color:var(--shell-muted);font-size:12px}
+.user-block{margin-left:auto;padding-left:18px;border-left:1px solid var(--shell-line);text-align:right}
+.user-block strong,.user-block span{display:block}.user-block span{margin-top:2px;color:var(--shell-muted);font-size:12px}
+.primary-tabs,.module-tabs{display:flex;align-items:stretch;gap:22px;min-height:46px;padding:0 22px;background:var(--shell-surface);border-bottom:1px solid var(--shell-line);overflow-x:auto}
+.module-tabs{gap:20px;padding-inline:18px}
+.primary-tabs a,.module-tabs button{display:inline-flex;align-items:center;min-width:max-content;padding:0 5px;border:0;border-bottom:3px solid transparent;background:none;color:var(--shell-muted);font-size:15px;font-weight:800;text-decoration:none}
+.primary-tabs a:hover,.primary-tabs a.active,.module-tabs button:hover,.module-tabs button.active{color:var(--shell-blue);border-bottom-color:var(--shell-blue)}
+.app-layout{display:grid;grid-template-columns:var(--shell-rail) minmax(0,1fr);min-height:calc(100vh - var(--dmo-header-height,76px) - 92px)}
+.production-rail{position:sticky;top:92px;align-self:start;height:calc(100vh - 92px);padding:15px 12px;background:var(--shell-blue-dark);color:#fff;overflow:auto}
+.rail-head{display:flex;align-items:center;justify-content:space-between;padding:2px 6px 12px}.rail-head span,.rail-head strong{display:block}.rail-head span{color:#9fc0d8;font-size:11px;text-transform:uppercase;letter-spacing:.1em}.rail-head strong{font-size:15px}
+.line-list{display:grid;gap:8px}.line-card{position:relative;min-height:92px;padding:10px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(255,255,255,.055);color:#fff;text-align:left}.line-card.active{border-color:#78aed4;background:#234d6d;box-shadow:inset 3px 0 #75b4df}.line-code{display:inline-grid;place-items:center;width:30px;height:26px;margin-right:5px;border-radius:6px;background:rgba(255,255,255,.12);font-weight:850}.line-state{float:right;margin-top:2px;font-size:11px;font-weight:800}.line-card>strong,.line-card>small,.line-metric{display:block}.line-card>strong{margin-top:8px;font-size:15px}.line-card>small,.line-metric{margin-top:2px;color:#bad0df;font-size:11px}
+.workspace{min-width:0;padding:18px 20px 36px}.view{display:none}.view.active{display:block}
+
+/* Shared content primitives */
+.surface,.dmo-card{background:var(--shell-surface);border:1px solid var(--shell-line);border-radius:var(--shell-radius);box-shadow:var(--dmo-shadow,0 8px 24px rgba(25,48,70,.06))}
+.page-heading,.sheet-title-row{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin:0 0 14px}.page-heading h1,.sheet-title-row h1{margin:1px 0 0;font-size:28px;line-height:1.15}.page-heading p,.sheet-title-row p{margin:3px 0 0;color:var(--shell-muted);font-size:14px}
+.section-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.section-heading h2{margin:0;font-size:18px}.section-heading p{margin:3px 0 0;color:var(--shell-muted);font-size:13px}
+.button,.dmo-button,.btn{min-height:40px;padding:9px 14px;border:1px solid var(--shell-blue);border-radius:8px;background:var(--shell-blue);color:#fff;font-size:14px;font-weight:800;line-height:1.2;white-space:nowrap}.button.ghost,.dmo-button.ghost,.btn.ghost{background:#fff;color:var(--shell-blue)}
+.status,.dmo-pill{display:inline-flex;min-height:24px;align-items:center;justify-content:center;padding:4px 9px;border-radius:999px;background:var(--dmo-brand-100,#d9e6f2);color:var(--dmo-brand-700,#315d88);font-size:12px;font-weight:850;line-height:1;white-space:nowrap}.status.success{background:var(--dmo-success-soft,#e5f0eb);color:var(--dmo-success,#527c72)}.status.warning{background:var(--dmo-warning-soft,#f7f0e7);color:var(--dmo-warning,#a97943)}
+.table-scroll{overflow:auto}.table-scroll table{width:100%;border-collapse:collapse}.table-scroll th{padding:9px 10px;background:var(--shell-subtle);color:var(--shell-muted);font-size:11px;text-align:left;text-transform:uppercase}.table-scroll td{padding:9px 10px;border-top:1px solid var(--shell-line);font-size:13px}
+
+/* Common calendars and tool cards inherit the same rhythm. */
+.calendar-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.weekday,.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.weekday{margin-top:12px;color:var(--shell-muted);font-size:12px;font-weight:800;text-align:center}.day{position:relative;min-width:0;aspect-ratio:1;border:1px solid transparent;border-radius:8px;background:transparent;font-size:14px}.day.selected{border-color:var(--shell-blue);background:var(--shell-blue);color:#fff;font-weight:850}
+.tool-card,.article-card{position:relative;min-width:0;border:1px solid var(--shell-line);border-radius:var(--shell-radius);background:#fff;overflow:hidden}.tool-card>header,.article-card>header{min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid var(--shell-line);background:var(--shell-subtle)}.tool-code{font-size:21px;font-weight:900;line-height:1}.tool-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.tool-fields.two{grid-template-columns:repeat(2,minmax(0,1fr))}.tool-fields label>span{display:block;margin-bottom:3px;color:var(--shell-muted);font-size:10px;font-weight:800;text-transform:uppercase}.tool-fields input,.tool-fields select,.tool-fields textarea{width:100%;min-width:0;border:1px solid transparent;border-radius:6px;background:transparent;padding:5px 6px;font-size:13px}.tool-fields input,.tool-fields select{height:32px}
+
+@media(max-width:980px){.app-layout{display:block}.production-rail{position:static;height:auto}.workspace{padding:14px}.primary-tabs,.module-tabs{gap:16px;padding-inline:14px}.page-heading,.sheet-title-row{align-items:flex-start;flex-direction:column}.tool-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.app-header{padding:10px 14px}.app-header .brand-copy span,.brand-copy span{display:none}.workspace{padding:10px}.tool-fields,.tool-fields.two{grid-template-columns:1fr}.button,.dmo-button,.btn{width:100%}}
+

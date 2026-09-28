@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1366">
+<title>Definições — Controlo</title>
+<link rel="stylesheet" href="0_ASSET_CANONICAL_DESIGN_SYSTEM.css">
+<link rel="stylesheet" href="0_ASSET_SHELL.css">
+</head>
+<body class="dmo-page-viewport" data-dmo-page="controlo">
+<div data-dmo-shell></div>
+<nav class="tabs dmo-secondary-nav" aria-label="Áreas do Controlo">
+<a href="21_CONTROLO_01_VISUAL_AUTHORITY_controlo.html">Controlo</a>
+<a href="22_PESO_OPERADOR_01_VISUAL_AUTHORITY_peso-operador.html">Peso</a>
+<a href="24_PEGAMENTOS_01_VISUAL_AUTHORITY_pegamentos.html">Pegamentos</a>
+<a href="21_CONTROLO_02_VISUAL_AUTHORITY_folha.html">Folha</a>
+<a href="resumo.html">Resumo</a>
+<a class="active" aria-current="page" href="21_CONTROLO_03_VISUAL_AUTHORITY_definicoes.html">Definições</a>
+</nav>
+
+<main class="dmo-page-main">
+<div class="dmo-page-head">
+<div>
+<h1>Definições do Controlo</h1>
+<p>Configuração do workspace, diretório de produção e routing de email.</p>
+</div>
+</div>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Diretório base do servidor</h3></div>
+<div class="dmo-grid-2">
+<div class="dmo-field">
+<label for="baseDir">Caminho base</label>
+<input id="baseDir" placeholder="Ex.: \\servidor\DMO\Capacidades">
+</div>
+<div class="dmo-field">
+<label>Estado da verificação</label>
+<span class="dmo-pill" id="baseDirStatus">Por verificar</span>
+</div>
+</div>
+<p class="dmo-hint">Demo: use \\servidor\DMO para ok; \\offline\DMO para workspace-unavailable; caminho vazio ou \\naoexiste\DMO para not-found.</p>
+<div class="dmo-actions">
+<button class="dmo-button" id="verifyBaseDir" type="button">Verificar</button>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Pré-visualização do diretório de produção</h3></div>
+<div class="dmo-grid-3">
+<div class="dmo-summary-item"><span>Referência</span><strong>7080C002</strong></div>
+<div class="dmo-summary-item"><span>Produção</span><strong>202602</strong></div>
+<div class="dmo-summary-item"><span>Máquina</span><strong>C3</strong></div>
+</div>
+<div class="dmo-field dmo-mt-4">
+<label>Caminho resolvido</label>
+<input id="previewPath" readonly aria-readonly="true" value="—">
+</div>
+<div class="dmo-table-wrap dmo-mt-3">
+<table class="dmo-table" id="previewTable">
+<thead>
+<tr><th>Tipo</th><th>Nome do ficheiro</th><th>Estado</th></tr>
+</thead>
+<tbody>
+<tr><td>Peso</td><td>Peso_7080C002_C3.pdf</td><td><span class="dmo-pill inactive">Preview</span></td></tr>
+<tr><td>Resumo</td><td>Resume_7080C002_C3.pdf</td><td><span class="dmo-pill inactive">Preview</span></td></tr>
+<tr><td>Pegamentos</td><td>Pegamentos_7080C002_C3.pdf</td><td><span class="dmo-pill inactive">Preview</span></td></tr>
+</tbody>
+</table>
+</div>
+<p class="dmo-hint">Render apenas; não cria ficheiros nem diretórios.</p>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Routing de email por grupo de máquina</h3></div>
+<p class="dmo-hint">Routing fechado: B1/B2/B3 → Grupo B; C1/C2/C3 → Grupo C; qualquer outra → refusal fail-closed.</p>
+<div class="dmo-table-wrap">
+<table class="dmo-table">
+<thead>
+<tr><th>Máquina</th><th>Grupo</th><th>Resultado do routing</th></tr>
+</thead>
+<tbody>
+<tr><td>B1</td><td>Grupo B</td><td><span class="dmo-pill active">ok</span></td></tr>
+<tr><td>B2</td><td>Grupo B</td><td><span class="dmo-pill active">ok</span></td></tr>
+<tr><td>B3</td><td>Grupo B</td><td><span class="dmo-pill active">ok</span></td></tr>
+<tr><td>C1</td><td>Grupo C</td><td><span class="dmo-pill active">ok</span></td></tr>
+<tr><td>C2</td><td>Grupo C</td><td><span class="dmo-pill active">ok</span></td></tr>
+<tr><td>C3</td><td>Grupo C</td><td><span class="dmo-pill active">ok</span></td></tr>
+<tr><td>outra</td><td>—</td><td><span class="dmo-pill rejected">refusal</span></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head">
+<div>
+<h3>Configuração de email</h3>
+<p class="dmo-hint">Templates e destinatários configuráveis apenas aqui; nunca hardcoded no envio.</p>
+</div>
+<span class="dmo-pill" id="emailConfigStatus">Config em falta</span>
+</div>
+<div class="dmo-config-status" id="emailConfigReason">Preencha template e destinatários para cada grupo.</div>
+
+<div class="dmo-grid-2">
+<div class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Grupo B (B1/B2/B3)</h3></div>
+<div class="dmo-field">
+<label for="groupBTemplate">Template</label>
+<textarea id="groupBTemplate" rows="4" placeholder="Use {{referência}}, {{produção}}, {{máquina}}."></textarea>
+</div>
+<div class="dmo-field">
+<label for="groupBRecipients">Destinatários (separados por vírgula)</label>
+<input id="groupBRecipients" placeholder="prod.b@empresa.pt, qualidade.b@empresa.pt">
+</div>
+<div class="dmo-recipient-list" id="groupBTags"></div>
+</div>
+
+<div class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Grupo C (C1/C2/C3)</h3></div>
+<div class="dmo-field">
+<label for="groupCTemplate">Template</label>
+<textarea id="groupCTemplate" rows="4" placeholder="Use {{referência}}, {{produção}}, {{máquina}}."></textarea>
+</div>
+<div class="dmo-field">
+<label for="groupCRecipients">Destinatários (separados por vírgula)</label>
+<input id="groupCRecipients" placeholder="prod.c@empresa.pt, qualidade.c@empresa.pt">
+</div>
+<div class="dmo-recipient-list" id="groupCTags"></div>
+</div>
+</div>
+
+<div class="dmo-actions">
+<button class="dmo-button" id="saveEmailConfig" type="button">Guardar configuração</button>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Simulação de envio</h3></div>
+<div class="dmo-grid-3">
+<div class="dmo-field"><label for="testMachine">Máquina</label><input id="testMachine" value="B3"></div>
+<div class="dmo-field"><label for="testReference">Referência</label><input id="testReference" value="7080C002"></div>
+<div class="dmo-field"><label for="testProduction">Produção</label><input id="testProduction" value="202602"></div>
+</div>
+<div class="dmo-actions">
+<button class="dmo-button" id="testSend" type="button">Simular envio</button>
+</div>
+<div class="dmo-config-status" id="testResult"></div>
+</section>
+</main>
+
+<div class="dmo-toast" id="toast"></div>
+
+<script src="0_ASSET_SHELL.js"></script>
+<script>
+(function(){
+"use strict";
+
+var toastEl=document.querySelector("#toast");
+var baseDirKey="dmoControloBaseDir";
+var emailConfigKey="dmoControloEmailConfig";
+var demoRef="7080C002";
+var demoProd="202602";
+var demoMachine="C3";
+
+function $(s){return document.querySelector(s);}
+
+function say(text){
+  toastEl.textContent=text;
+  toastEl.classList.add("show");
+  setTimeout(function(){toastEl.classList.remove("show");},2200);
+}
+
+function getBaseDir(){
+  try{return sessionStorage.getItem(baseDirKey)||"";}catch(_){return "";}
+}
+
+function setBaseDir(value){
+  try{sessionStorage.setItem(baseDirKey,value);}catch(_){}
+}
+
+function getEmailConfig(){
+  try{
+    var raw=sessionStorage.getItem(emailConfigKey);
+    if(raw)return JSON.parse(raw);
+  }catch(_){}
+  return {B:{template:"",recipients:[]},C:{template:"",recipients:[]}};
+}
+
+function setEmailConfig(cfg){
+  try{sessionStorage.setItem(emailConfigKey,JSON.stringify(cfg));}catch(_){}
+}
+
+function parseRecipients(value){
+  return value.split(",").map(function(s){return s.trim();}).filter(function(s){return s.length>0 && s.indexOf("@")>0;});
+}
+
+function renderRecipientTags(containerId,recipients){
+  var container=$(containerId);
+  container.replaceChildren();
+  recipients.forEach(function(email){
+    var span=document.createElement("span");
+    span.className="dmo-recipient-tag";
+    span.textContent=email;
+    container.appendChild(span);
+  });
+}
+
+function loadEmailConfig(){
+  var cfg=getEmailConfig();
+  $("#groupBTemplate").value=cfg.B.template||"";
+  $("#groupCTemplate").value=cfg.C.template||"";
+  $("#groupBRecipients").value=(cfg.B.recipients||[]).join(", ");
+  $("#groupCRecipients").value=(cfg.C.recipients||[]).join(", ");
+  renderRecipientTags("#groupBTags",cfg.B.recipients||[]);
+  renderRecipientTags("#groupCTags",cfg.C.recipients||[]);
+}
+
+function checkEmailConfig(){
+  var cfg=getEmailConfig();
+  var requiredPlaceholders=["{{referência}}","{{produção}}","{{máquina}}"];
+  var problems=[];
+  ["B","C"].forEach(function(group){
+    var g=cfg[group]||{template:"",recipients:[]};
+    if(!g.template||!g.template.trim()){problems.push("Grupo "+group+": template em falta");return;}
+    if(!g.recipients||g.recipients.length===0){problems.push("Grupo "+group+": destinatários em falta");return;}
+    var missing=requiredPlaceholders.filter(function(ph){return g.template.indexOf(ph)<0;});
+    if(missing.length>0){problems.push("Grupo "+group+": template ambíguo (falta "+missing.join(", ")+")");}
+  });
+  if(problems.length===0)return {status:"ok",reason:"Configuração ok",className:"approved"};
+  var ambiguous=problems.some(function(p){return p.indexOf("ambíguo")>=0;});
+  return {
+    status:ambiguous?"template-ambíguo":"config-em-falta",
+    reason:problems.join("; "),
+    className:ambiguous?"":"rejected"
+  };
+}
+
+function updateEmailStatus(){
+  var result=checkEmailConfig();
+  var badge=$("#emailConfigStatus");
+  badge.textContent=result.status==="ok"?"Config ok":(result.status==="template-ambíguo"?"Template ambíguo":"Config em falta");
+  badge.className="dmo-pill "+(result.status==="ok"?"approved":(result.status==="template-ambíguo"?"pending":"rejected"));
+  var reason=$("#emailConfigReason");
+  reason.textContent=result.reason;
+}
+
+function machineGroup(machine){
+  var m=String(machine||"").trim().toUpperCase();
+  if(["B1","B2","B3"].indexOf(m)>=0)return "B";
+  if(["C1","C2","C3"].indexOf(m)>=0)return "C";
+  return null;
+}
+
+function verifyBaseDir(){
+  var path=$("#baseDir").value.trim();
+  setBaseDir(path);
+  var status=$("#baseDirStatus");
+  if(!path){
+    status.textContent="not-found";
+    status.className="dmo-pill rejected";
+    $("#previewPath").value="—";
+    say("Caminho não encontrado");
+    return;
+  }
+  var lower=path.toLowerCase();
+  if(lower.indexOf("offline")>=0||lower.indexOf("indisponivel")>=0){
+    status.textContent="workspace-unavailable";
+    status.className="dmo-pill pending";
+    $("#previewPath").value=path+"/"+demoRef+"/"+demoProd+"/";
+    say("Workspace indisponível");
+    return;
+  }
+  if(lower.indexOf("naoexiste")>=0||lower.indexOf("noexiste")>=0){
+    status.textContent="not-found";
+    status.className="dmo-pill rejected";
+    $("#previewPath").value="—";
+    say("Caminho não encontrado");
+    return;
+  }
+  status.textContent="ok";
+  status.className="dmo-pill approved";
+  $("#previewPath").value=path.replace(/\\/g,"/").replace(/\/$/,"")+"/"+demoRef+"/"+demoProd+"/";
+  say("Diretório verificado com sucesso");
+}
+
+$("#verifyBaseDir").addEventListener("click",verifyBaseDir);
+
+$("#saveEmailConfig").addEventListener("click",function(){
+  var cfg={
+    B:{template:$("#groupBTemplate").value.trim(),recipients:parseRecipients($("#groupBRecipients").value)},
+    C:{template:$("#groupCTemplate").value.trim(),recipients:parseRecipients($("#groupCRecipients").value)}
+  };
+  setEmailConfig(cfg);
+  loadEmailConfig();
+  updateEmailStatus();
+  say("Configuração de email guardada");
+});
+
+$("#groupBRecipients").addEventListener("input",function(){renderRecipientTags("#groupBTags",parseRecipients(this.value));});
+$("#groupCRecipients").addEventListener("input",function(){renderRecipientTags("#groupCTags",parseRecipients(this.value));});
+
+$("#testSend").addEventListener("click",function(){
+  var machine=$("#testMachine").value.trim();
+  var reference=$("#testReference").value.trim();
+  var production=$("#testProduction").value.trim();
+  var group=machineGroup(machine);
+  var resultEl=$("#testResult");
+  if(!group){
+    resultEl.innerHTML="<span class='dmo-pill rejected'>Refusal: máquina "+machine+" não pertence a nenhum grupo configurado (fail-closed).</span>";
+    return;
+  }
+  var cfgCheck=checkEmailConfig();
+  if(cfgCheck.status!=="ok"){
+    resultEl.innerHTML="<span class='dmo-pill rejected'>Envio bloqueado: "+cfgCheck.reason+".</span>";
+    return;
+  }
+  var cfg=getEmailConfig()[group];
+  var template=cfg.template
+    .replace(/{{referência}}/g,reference)
+    .replace(/{{produção}}/g,production)
+    .replace(/{{máquina}}/g,machine);
+  resultEl.innerHTML="<span class='dmo-pill approved'>Routing ok → Grupo "+group+" ("+machine+")<br>Destinatários: "+cfg.recipients.join(", ")+"<br>Assunto: "+template.split("\n")[0]+"</span>";
+});
+
+$("#baseDir").value=getBaseDir();
+loadEmailConfig();
+updateEmailStatus();
+verifyBaseDir();
+
+})();
+</script>
+</body>
+</html>

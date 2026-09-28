@@ -1,0 +1,12 @@
+/* Shared calendar geometry for Job On, Controlo, Aprovações and Boquilhas. */
+.dmo-calendar .dmo-calendar-nav{display:grid;grid-template-columns:36px minmax(0,1fr) 36px;align-items:center;gap:8px;width:100%;margin:0 0 14px}
+.dmo-calendar .dmo-calendar-nav :is(h2,strong){min-width:0;margin:0;text-align:center;text-transform:capitalize;color:#193046;font:800 17px/1.3 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.dmo-calendar .dmo-calendar-nav button{display:grid;place-items:center;box-sizing:border-box;width:36px;height:36px;min-width:36px;min-height:36px;margin:0;padding:0;border:1px solid #3c73a8;border-radius:8px;background:#3c73a8;color:#fff;font:700 20px/1 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+.dmo-calendar .dmo-calendar-nav button:hover,.dmo-calendar .dmo-calendar-nav button:focus-visible{background:#fff;color:#3c73a8;outline:2px solid #3c73a8;outline-offset:2px}
+.dmo-calendar .dmo-calendar-week,.dmo-calendar .dmo-calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}
+.dmo-calendar .dmo-calendar-week{margin:0 0 6px;color:#64778a;font:750 11px/1.4 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-transform:capitalize}
+.dmo-calendar .dmo-calendar-days>button,.dmo-calendar .dmo-calendar-days>.day{position:relative;display:grid;place-items:center;box-sizing:border-box;aspect-ratio:1;width:100%;min-height:34px;margin:0;padding:0;border:1px solid #d9e6f2;border-radius:7px;background:#fff;color:#172d42;font:700 12px/1 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer}
+.dmo-calendar .dmo-calendar-days>button:hover,.dmo-calendar .dmo-calendar-days>button:focus-visible{border-color:#3c73a8;background:#e8eff7;outline:none}
+.dmo-calendar .dmo-calendar-days>button:is(.selected,.is-selected){background:#3c73a8;border-color:#3c73a8;color:#fff}
+.dmo-calendar .dmo-calendar-days>button:is(.has,.has-events,.has-record):not(.selected):not(.is-selected){color:#244f77;font-weight:800}
+.dmo-calendar .dmo-calendar-days>button:is(.blank,:disabled){visibility:hidden;pointer-events:none}

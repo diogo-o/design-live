@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Folha de Peso — Controlo</title>
+<link rel="stylesheet" href="0_ASSET_CANONICAL_DESIGN_SYSTEM.css">
+<link rel="stylesheet" href="0_ASSET_SHELL.css">
+<style>
+/* Page-specific helpers for folha-peso; shared layout helpers live in canonical CSS. */
+.peso-context-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--dmo-space-2)}
+.readings{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.reading{display:grid;gap:7px}
+.reading-result{grid-column:1/-1;display:block;margin-top:-2px;padding:6px 8px;border-radius:7px;background:var(--dmo-brand-050);color:var(--dmo-brand-700);font-size:11px;font-weight:750}
+.reading-result.pending{color:var(--dmo-muted)}
+.live{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.live div{padding:10px;background:var(--dmo-subtle);border-radius:8px}
+.live span{display:block;color:var(--dmo-muted);font-size:10px}
+.live strong{display:block;font-size:18px}
+.result-summary{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
+.result-summary div{padding:10px;background:var(--dmo-subtle);border-radius:8px}
+.result-summary span{display:block;color:var(--dmo-muted);font-size:10px}
+.result-summary strong{display:block;font-size:15px}
+.formula-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;padding:10px 12px;border-left:4px solid var(--dmo-brand-600);border-radius:8px;background:var(--dmo-brand-050)}
+.formula-banner code{font-size:15px;font-weight:850;color:var(--dmo-brand-700)}
+.comparison-pairs{display:grid;gap:9px}
+.comparison-pair{display:grid;grid-template-columns:90px 150px 100px 150px minmax(150px,1fr);gap:8px;align-items:end;padding:10px;border:1px solid var(--dmo-border);border-radius:9px;background:var(--dmo-subtle)}
+.pair-result{min-height:36px;padding:7px 9px;border-radius:7px;background:#fff}
+.pair-result span,.pair-result strong{display:block}
+.pair-result span{font-size:9px;color:var(--dmo-muted)}
+.previous-production-chooser{display:none;margin:13px 0;padding:14px;border:1px solid var(--dmo-border);border-radius:10px;background:var(--dmo-subtle)}
+.previous-production-chooser.open{display:grid;grid-template-columns:minmax(260px,1fr) auto;gap:10px;align-items:end}
+.comparison-identities{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:13px 0}
+.production-identity{padding:12px 14px;border:1px solid var(--dmo-border);border-left:4px solid var(--dmo-brand-600);border-radius:9px;background:#fff}
+.production-identity.previous{border-left-color:#e99022}
+.production-identity span{display:block;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--dmo-muted)}
+.production-identity strong{display:block;margin-top:3px;font-size:15px;color:var(--dmo-brand-700)}
+.production-identity small{display:block;margin-top:3px;color:var(--dmo-muted);font-size:11px}
+.embedded-comparison-result{display:none}
+.embedded-comparison-result.ready{display:block}
+.comparison-empty{padding:20px;background:var(--dmo-subtle);border-radius:8px;text-align:center;color:var(--dmo-muted)}
+.decision{border-top:1px solid var(--dmo-border);padding-top:var(--dmo-space-14);margin-top:var(--dmo-space-14)}
+.approved-message{margin-right:auto;color:var(--dmo-success);font-size:var(--dmo-text-md);font-weight:750}
+.audit-log{margin-top:var(--dmo-space-3);padding:var(--dmo-space-3);background:var(--dmo-subtle);border-radius:var(--dmo-r-control)}
+.audit-log h4{margin:0 0 var(--dmo-space-2);font-size:var(--dmo-text-lg)}
+.audit-log ul{margin:0;padding-left:var(--dmo-space-4);color:var(--dmo-muted);font-size:var(--dmo-text-md)}
+[data-create-only].dmo-actions{margin:0}
+[data-mode="create"] [data-approve-only]{display:none}
+[data-mode="approve"] [data-create-only]{display:none}
+</style>
+</head>
+<body data-dmo-page="controlo" data-mode="create">
+<div data-dmo-shell></div>
+<nav class="tabs dmo-secondary-nav" aria-label="Áreas do Controlo de Peso">
+<a class="beta-sub-link" href="22_PESO_OPERADOR_01_VISUAL_AUTHORITY_peso-operador.html">Novo controlo</a>
+<a class="beta-sub-link" href="23_PESO_RESPONSAVEL_01_VISUAL_AUTHORITY_peso-responsavel.html">Aprovações</a>
+<a class="beta-sub-link" href="resumo.html">Resumo</a>
+<a class="beta-sub-link" href="24_PEGAMENTOS_01_VISUAL_AUTHORITY_pegamentos.html">Pegamentos</a>
+</nav>
+
+<main class="dmo-page-main">
+<div class="dmo-page-head">
+<div>
+<h1>Folha de Peso</h1>
+<p id="pageSubtitle">Novo controlo de peso e volume.</p>
+</div>
+<div>
+<span class="dmo-pill" id="statusBadge">Rascunho</span>
+</div>
+</div>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Contexto da produção</h3></div>
+<div class="peso-context-grid" aria-label="Contexto da produção">
+<div class="dmo-summary-item"><span>Referência</span><strong>9389T194</strong></div>
+<div class="dmo-summary-item"><span>CM</span><strong>9389</strong></div>
+<div class="dmo-summary-item"><span>BQ / Neckring</span><strong>T194</strong></div>
+<div class="dmo-summary-item"><span>MF</span><strong>5447</strong></div>
+<div class="dmo-summary-item"><span>Linha</span><strong>B3</strong></div>
+<div class="dmo-summary-item"><span>Lote</span><strong>L26</strong></div>
+</div>
+<p class="dmo-hint">Dados recebidos do Job On. Não editáveis nesta folha.</p>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Identificação do controlo</h3></div>
+<div class="dmo-grid-4">
+<div class="dmo-field"><label for="controlProduction">Produção</label><input id="controlProduction" value="202601"></div>
+<div class="dmo-field"><label for="controlLine">Linha</label><input id="controlLine" value="B3"></div>
+<div class="dmo-field"><label for="controlLot">Lote</label><input id="controlLot" value="L26"></div>
+<div class="dmo-field"><label for="controlType">Tipo</label><select id="controlType"><option>NNPB</option><option>PS</option></select></div>
+<div class="dmo-field"><label for="controlDate">Data de produção</label><input id="controlDate" type="date" value="2026-08-15"></div>
+<div class="dmo-field"><label for="controlId">ID do controlo</label><input id="controlId" value="PESO-001" readonly aria-readonly="true"></div>
+<div class="dmo-field"><label for="jobonId">Job On</label><input id="jobonId" value="JOBON-001" readonly aria-readonly="true"></div>
+<div class="dmo-field"><label for="controlRevision">Revisão</label><input id="controlRevision" value="1" readonly aria-readonly="true"></div>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head">
+<h3>Leituras por CM</h3>
+<div class="dmo-actions" data-create-only>
+<button class="dmo-button" id="removeReading" type="button">Remover leitura</button>
+<button class="dmo-button" id="addReading" type="button">Adicionar leitura</button>
+</div>
+</div>
+<div class="readings" id="readings">
+<div class="reading">
+<div class="dmo-field"><label>CM</label><input value="12" class="cm-input"></div>
+<div class="dmo-field"><label>Massa de água (g)</label><input value="152,43" class="water-input decimal-2"></div>
+<span class="reading-result pending">Capacidade: — · Peso do vidro: —</span>
+</div>
+<div class="reading">
+<div class="dmo-field"><label>CM</label><input value="21" class="cm-input"></div>
+<div class="dmo-field"><label>Massa de água (g)</label><input value="152,43" class="water-input decimal-2"></div>
+<span class="reading-result pending">Capacidade: — · Peso do vidro: —</span>
+</div>
+<div class="reading">
+<div class="dmo-field"><label>CM</label><input value="45" class="cm-input"></div>
+<div class="dmo-field"><label>Massa de água (g)</label><input value="151,43" class="water-input decimal-2"></div>
+<span class="reading-result pending">Capacidade: — · Peso do vidro: —</span>
+</div>
+<div class="reading">
+<div class="dmo-field"><label>CM</label><input value="54" class="cm-input"></div>
+<div class="dmo-field"><label>Massa de água (g)</label><input value="151,43" class="water-input decimal-2"></div>
+<span class="reading-result pending">Capacidade: — · Peso do vidro: —</span>
+</div>
+</div>
+<div class="live">
+<div><span>Leituras válidas</span><strong id="readingCount">4</strong></div>
+<div><span>Média em água</span><strong id="avgWater">—</strong></div>
+<div><span>Capacidade média</span><strong id="avgCapacity">—</strong></div>
+<div><span>Peso médio do vidro</span><strong id="avgGlass">—</strong></div>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Resultados por CM e desvios</h3></div>
+<div class="result-summary">
+<div><span>Densidade da água</span><strong id="resultWaterDensity">0,99652 g/cm³</strong></div>
+<div><span>Capacidade média</span><strong id="resultAvgCapacity">151,93 cm³</strong></div>
+<div><span>Peso médio do vidro</span><strong id="resultAvgGlass">230,97 g</strong></div>
+<div><span>Peso nominal</span><strong>200,00 g</strong></div>
+<div><span>Diferença nominal</span><strong id="resultNominalDiff">+30,97 g</strong></div>
+<div><span>Comparação histórica</span><strong id="resultHistory">Por criar</strong></div>
+</div>
+<div class="dmo-table-wrap">
+<table class="dmo-table" id="resultsTable">
+<thead>
+<tr><th>CM</th><th>Massa de água (g)</th><th>Capacidade (cm³)</th><th>Desvio cm³</th><th>Desvio %</th><th>Peso do vidro (g)</th></tr>
+</thead>
+<tbody>
+<tr><td>12</td><td>152,43</td><td>152,43</td><td>+0,50</td><td>+0,33%</td><td><strong>231,41</strong></td></tr>
+<tr><td>21</td><td>152,43</td><td>152,43</td><td>+0,50</td><td>+0,33%</td><td><strong>231,41</strong></td></tr>
+<tr><td>45</td><td>151,43</td><td>151,43</td><td>-0,50</td><td>-0,33%</td><td><strong>230,53</strong></td></tr>
+<tr><td>54</td><td>151,43</td><td>151,43</td><td>-0,50</td><td>-0,33%</td><td><strong>230,53</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p class="dmo-hint">Valores de capacidade e peso do vidro são demonstrativos (DEMO ONLY).</p>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Parâmetros de cálculo</h3></div>
+<div class="dmo-grid-4">
+<div class="dmo-field"><label for="waterTemperature">Temperatura da água (°C)</label><input id="waterTemperature" type="number" min="5" max="35" step="0.1" value="23"></div>
+<div class="dmo-field"><label for="waterDensity">Densidade da água (g/cm³)</label><input id="waterDensity" value="0,99652" readonly aria-readonly="true"></div>
+<div class="dmo-field"><label for="marisaVolume">Volume Marisa/BQ (cm³)</label><input id="marisaVolume" type="number" step="0.01" placeholder="0,00"></div>
+<div class="dmo-field"><label for="puncaoVolume">Volume Punção/PU (cm³)</label><input id="puncaoVolume" type="number" step="0.01" placeholder="0,00"></div>
+<div class="dmo-field"><label for="glassDensity">Densidade do vidro (g/cm³)</label><input id="glassDensity" value="2,4027" readonly aria-readonly="true"></div>
+<div class="dmo-field"><label for="tamponVolume">Volume do tampão (cm³)</label><input id="tamponVolume" value="0,00" readonly aria-readonly="true"></div>
+<div class="dmo-field" data-create-only><label for="tamponSagitta">Sagitta do calote (mm)</label><input id="tamponSagitta" type="number" step="0.01" placeholder="Duplo clique no campo para calcular"></div>
+<div class="dmo-field" data-create-only><label for="tamponDiameter">Diâmetro do tampão (mm)</label><input id="tamponDiameter" type="number" step="0.01" placeholder="Usado no calculador"></div>
+</div>
+<p class="dmo-hint">A linha de referência Calote/Tampão é apenas referência visual — não entra no cálculo do peso do vidro.</p>
+<div class="dmo-actions" data-create-only>
+<button class="dmo-button" id="calcTampon" type="button">Calcular volume do tampão</button>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad" id="embeddedComparison">
+<div class="dmo-section-head">
+<div>
+<h3>Comparação com produção anterior aprovada</h3>
+<p class="dmo-hint">Emparelhamento pelo número do CM. Sem correspondência → "sem par".</p>
+</div>
+</div>
+<div class="dmo-actions" data-create-only>
+<span class="comparison-status" id="embeddedComparisonStatus">Produção anterior por confirmar</span>
+<button class="dmo-button" id="choosePreviousProduction" type="button">Escolher produção anterior</button>
+</div>
+<div class="previous-production-chooser" id="previousProductionChooser">
+<div class="dmo-field">
+<label for="previousProductionSelect">Produções anteriores aprovadas desta referência</label>
+<select id="previousProductionSelect">
+<option value="">Selecionar produção</option>
+<option value="202512" data-line="B3" data-revision="2">202512 · Linha B3 · Revisão 2 · 14/05/2026</option>
+<option value="202411" data-line="B2" data-revision="4">202411 · Linha B2 · Revisão 4 · 03/11/2025</option>
+<option value="202310" data-line="B3" data-revision="1">202310 · Linha B3 · Revisão 1 · 22/08/2024</option>
+</select>
+</div>
+<button class="dmo-button" id="confirmPreviousProduction" type="button">Confirmar produção</button>
+</div>
+<div class="comparison-identities">
+<div class="production-identity">
+<span>Produção atual</span>
+<strong>202601 · Linha B3</strong>
+<small>Produção 202601 · B3 · Revisão 1</small>
+</div>
+<div class="production-identity previous">
+<span>Produção anterior aprovada</span>
+<strong id="previousProductionLabel">Ainda não escolhida</strong>
+<small id="previousProductionIdentity">Selecione uma produção na lista acima.</small>
+</div>
+</div>
+<div class="comparison-empty" id="embeddedComparisonEmpty">Confirme a produção anterior para criar a tabela de comparação.</div>
+<div class="embedded-comparison-result" id="embeddedComparisonResult">
+<div class="formula-banner">
+<div><strong>Comparação direta por CM</strong><span class="dmo-hint">A cavidade atual é emparelhada com a cavidade de mesmo número na produção anterior.</span></div>
+<code>CM atual ↔ CM anterior</code>
+</div>
+<div class="dmo-table-wrap">
+<table class="dmo-table compact-table" id="embeddedComparisonTable">
+<thead>
+<tr><th>CM atual</th><th>Peso vidro atual (g)</th><th>CM anterior</th><th>Peso vidro anterior (g)</th><th>Δ peso (g)</th><th>Variação</th></tr>
+</thead>
+<tbody id="embeddedComparisonBody"></tbody>
+</table>
+</div>
+<p class="dmo-hint" id="comparisonPlainRead">Leitura rápida: ainda não foi criada comparação.</p>
+</div>
+<div class="dmo-actions" data-create-only>
+<button class="dmo-button" id="createEmbeddedComparison" type="button" disabled>Criar tabela de comparação</button>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Referências SAP e notas</h3></div>
+<div class="dmo-grid-3">
+<div class="dmo-field"><label for="sapReference1">Referência SAP 1</label><input id="sapReference1" placeholder="Ex.: ordem / lote SAP"></div>
+<div class="dmo-field"><label for="sapReference2">Referência SAP 2</label><input id="sapReference2" placeholder="Ex.: notificação de qualidade"></div>
+<div class="dmo-field"><label for="notes">Notas</label><textarea id="notes" rows="2" placeholder="Informação adicional relevante para este controlo"></textarea></div>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Rastreabilidade</h3></div>
+<div class="dmo-grid-4">
+<div class="dmo-summary-item"><span>Verificado por</span><strong>João Silva</strong></div>
+<div class="dmo-summary-item"><span>Aprovado por</span><strong id="approvedBy">—</strong></div>
+<div class="dmo-summary-item"><span>Data de submissão</span><strong id="submittedAt">—</strong></div>
+<div class="dmo-summary-item"><span>Data de aprovação</span><strong id="approvedAt">—</strong></div>
+</div>
+<div class="audit-log" data-approve-only>
+<h4>Audit log</h4>
+<ul id="auditList">
+<li>PESO-001 criado em 15/08/2026 · 09:15 por João Silva</li>
+</ul>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-actions" data-create-only>
+<button class="dmo-button" id="saveDraft" type="button">Guardar rascunho</button>
+<button class="dmo-button" id="submitControl" type="button">Submeter</button>
+<button class="dmo-button" id="pdfControl" type="button" disabled title="PDF apenas disponível após submissão aprovada">PDF</button>
+</div>
+<div class="decision" data-approve-only>
+<div class="dmo-field">
+<label for="rejectionReason">Motivo / alterações necessárias</label>
+<textarea id="rejectionReason" rows="2" placeholder="Obrigatório se não aprovar."></textarea>
+</div>
+<div class="dmo-actions">
+<span class="approved-message" id="approveMessage"></span>
+<button class="dmo-button" id="reopenControl" type="button">Reabrir</button>
+<button class="dmo-button danger" id="rejectControl" type="button">Não aprovar</button>
+<button class="dmo-button success" id="approveControl" type="button">Aprovar</button>
+</div>
+</div>
+</section>
+</main>
+
+<div class="dmo-modal-backdrop" id="tamponModal">
+<div class="dmo-modal">
+<div class="dmo-modal-head">
+<div><h2>Calote do tampão</h2><p class="dmo-hint">Referência visual — não entra no cálculo do peso.</p></div>
+<button class="dmo-button dmo-icon-button" data-close type="button">×</button>
+</div>
+<div class="dmo-modal-body">
+<div class="dmo-grid-3">
+<div class="dmo-field"><label for="modalDiameter">Diâmetro (mm)</label><input id="modalDiameter" type="number" step="0.001" value="50"></div>
+<div class="dmo-field"><label for="modalSagitta">Sagitta (mm)</label><input id="modalSagitta" type="number" step="0.001" value="8"></div>
+<div class="dmo-field"><label for="modalVolume">Volume (cm³)</label><input id="modalVolume" readonly aria-readonly="true" value="—"></div>
+</div>
+</div>
+<div class="dmo-modal-foot">
+<button class="dmo-button" data-close type="button">Cancelar</button>
+<button class="dmo-button" id="applyTampon" type="button">Aplicar</button>
+</div>
+</div>
+</div>
+
+<div class="dmo-toast" id="toast"></div>
+
+<script src="0_ASSET_CANONICAL_INTERACTIONS.js"></script>
+<script src="0_ASSET_SHELL.js"></script>
+<script>
+(function(){
+"use strict";
+
+// DEMO ONLY — static mode and data. No backend, no localStorage.
+var params=new URLSearchParams(location.search);
+var isApprove=(params.get("mode")==="approve");
+document.body.setAttribute("data-mode",isApprove?"approve":"create");
+document.title=isApprove?"Folha de Peso — Aprovação":"Folha de Peso — Controlo";
+document.querySelector("#pageSubtitle").textContent=isApprove?"Revisão e decisão do controlo.":"Novo controlo de peso e volume.";
+document.querySelector("#statusBadge").textContent=isApprove?"Pendente":"Rascunho";
+if(isApprove){
+  document.querySelectorAll("input,select,textarea").forEach(function(el){
+    if(!el.hasAttribute("readonly") && el.id!=="rejectionReason"){el.setAttribute("readonly","readonly");}
+  });
+  document.querySelectorAll("#previousProductionSelect,#confirmPreviousProduction,#choosePreviousProduction,#createEmbeddedComparison,#addReading,#removeReading,#calcTampon,#saveDraft,#submitControl").forEach(function(el){el.setAttribute("disabled","disabled");});
+}
+
+function $(s){return document.querySelector(s);}
+function $$(s){return document.querySelectorAll(s);}
+
+var toastEl=$("#toast");
+function say(text){
+  toastEl.textContent=text;
+  toastEl.classList.add("show");
+  setTimeout(function(){toastEl.classList.remove("show");},2200);
+}
+
+// DEMO ONLY — water density table (5..35 °C) used for lookup, matching prototype lab values.
+var WATER_DENSITY=[
+  {t:5,v:0.99997},{t:6,v:0.99997},{t:7,v:0.99993},{t:8,v:0.99988},{t:9,v:0.99981},
+  {t:10,v:0.99973},{t:11,v:0.99963},{t:12,v:0.99953},{t:13,v:0.99940},{t:14,v:0.99927},
+  {t:15,v:0.99913},{t:16,v:0.99897},{t:17,v:0.99880},{t:18,v:0.99862},{t:19,v:0.99843},
+  {t:20,v:0.99823},{t:21,v:0.99802},{t:22,v:0.99780},{t:23,v:0.99652},{t:24,v:0.99732},
+  {t:25,v:0.99707},{t:26,v:0.99681},{t:27,v:0.99655},{t:28,v:0.99627},{t:29,v:0.99598},
+  {t:30,v:0.99568},{t:31,v:0.99537},{t:32,v:0.99505},{t:33,v:0.99473},{t:34,v:0.99440},
+  {t:35,v:0.99406}
+];
+
+function densityFor(temp){
+  // DEMO ONLY — nearest value from the lab table.
+  var rounded=Math.max(5,Math.min(35,Math.round(temp)));
+  var row=WATER_DENSITY.find(function(x){return x.t===rounded;});
+  return row?row.v:0.99823;
+}
+
+function formatPt(value){
+  return Number(value).toFixed(2).replace(".",",");
+}
+
+function parseNum(input){
+  var raw=String(input&&input.value!==undefined?input.value:input).trim().replace(",",".");
+  return raw===""?NaN:Number(raw);
+}
+
+function updateWaterDensity(){
+  var temp=parseNum($("#waterTemperature"));
+  var density=Number.isFinite(temp)?densityFor(temp):0.99652;
+  $("#waterDensity").value=formatPt(density);
+}
+
+$("#waterTemperature").addEventListener("input",updateWaterDensity);
+updateWaterDensity();
+
+// DEMO ONLY — sagitta/spherical cap volume calculator, visual reference only.
+function calcSagittaVolume(diameterMm,sagittaMm){
+  var r=diameterMm/2;
+  var h=sagittaMm;
+  if(h<=0||h>2*r)return 0;
+  // volume of spherical cap: V = π·h²·(3r−h)/3; convert mm³ → cm³ (/1000).
+  var volMm3=Math.PI*h*h*(3*r-h)/3;
+  return volMm3/1000;
+}
+
+function openTampon(){
+  $("#tamponModal").classList.add("open");
+  var d=parseNum($("#tamponDiameter"))||50;
+  var s=parseNum($("#tamponSagitta"))||8;
+  $("#modalDiameter").value=d.toFixed(3);
+  $("#modalSagitta").value=s.toFixed(3);
+  updateModalVolume();
+}
+
+function updateModalVolume(){
+  var d=parseNum($("#modalDiameter"));
+  var s=parseNum($("#modalSagitta"));
+  var v=calcSagittaVolume(d,s);
+  $("#modalVolume").value=v>0?formatPt(v):"—";
+}
+
+$("#calcTampon").addEventListener("click",openTampon);
+$("#tamponSagitta").addEventListener("dblclick",openTampon);
+$("#modalDiameter").addEventListener("input",updateModalVolume);
+$("#modalSagitta").addEventListener("input",updateModalVolume);
+$("#applyTampon").addEventListener("click",function(){
+  var v=parseNum($("#modalVolume"));
+  if(!Number.isFinite(v)||v<=0){say("Valores inválidos para o calote");return;}
+  $("#tamponVolume").value=formatPt(v);
+  $("#tamponSagitta").value=$("#modalSagitta").value;
+  $("#tamponDiameter").value=$("#modalDiameter").value;
+  $("#tamponModal").classList.remove("open");
+  say("Volume do tampão atualizado (referência visual)");
+});
+document.querySelectorAll("#tamponModal [data-close]").forEach(function(btn){
+  btn.addEventListener("click",function(){$("#tamponModal").classList.remove("open");});
+});
+
+// DEMO ONLY — measurement rows add/remove (CREATE only). Results are static demo values.
+function updateReadingCount(){
+  $("#readingCount").textContent=$$("#readings .reading").length;
+}
+
+function addReading(){
+  var container=$("#readings");
+  var idx=container.querySelectorAll(".reading").length+1;
+  var reading=document.createElement("div");
+  reading.className="reading";
+  reading.innerHTML='<div class="dmo-field"><label>CM</label><input type="number" step="1" class="cm-input" placeholder="Ex.: '+idx*10+'"></div>'+
+    '<div class="dmo-field"><label>Massa de água (g)</label><input type="number" step="0.01" class="water-input decimal-2" placeholder="0,00"></div>'+
+    '<span class="reading-result pending">Capacidade: — · Peso do vidro: —</span>';
+  container.appendChild(reading);
+  updateReadingCount();
+  say("Leitura adicionada (valores demonstrativos)");
+}
+
+function removeReading(){
+  var items=$$("#readings .reading");
+  if(items.length<=1){say("É necessária pelo menos uma leitura");return;}
+  items[items.length-1].remove();
+  updateReadingCount();
+}
+
+if(!isApprove){
+  $("#addReading").addEventListener("click",addReading);
+  $("#removeReading").addEventListener("click",removeReading);
+}
+
+// DEMO ONLY — previous-production comparison by CM number, never by position.
+var previousProductions={
+  "202512":[
+    {cm:"12",weight:231.78,volume:152.12},
+    {cm:"21",weight:230.05,volume:151.04},
+    {cm:"54",weight:230.92,volume:151.73}
+  ],
+  "202411":[
+    {cm:"12",weight:232.04,volume:152.33},
+    {cm:"45",weight:230.81,volume:151.48},
+    {cm:"54",weight:231.12,volume:151.82}
+  ],
+  "202310":[
+    {cm:"12",weight:231.10,volume:152.05}
+  ]
+};
+var confirmedPrevious=null;
+
+$("#choosePreviousProduction").addEventListener("click",function(){
+  $("#previousProductionChooser").classList.toggle("open");
+});
+
+$("#confirmPreviousProduction").addEventListener("click",function(){
+  var sel=$("#previousProductionSelect");
+  var opt=sel.selectedOptions[0];
+  if(!sel.value){say("Selecione uma produção anterior");return;}
+  confirmedPrevious={production:sel.value,line:opt.dataset.line,revision:opt.dataset.revision};
+  $("#previousProductionLabel").textContent=sel.value+" · Linha "+opt.dataset.line+" · Revisão "+opt.dataset.revision;
+  $("#previousProductionIdentity").textContent="Base aprovada selecionada para comparação";
+  $("#embeddedComparisonEmpty").hidden=true;
+  $("#embeddedComparisonResult").classList.remove("ready");
+  $("#createEmbeddedComparison").disabled=false;
+  $("#previousProductionChooser").classList.remove("open");
+  $("#embeddedComparisonStatus").textContent="Produção anterior confirmada";
+  say("Produção "+sel.value+" confirmada como base");
+});
+
+function signed(value,unit){
+  return (value>=0?"+":"")+formatPt(value)+" "+unit;
+}
+
+// DEMO ONLY — demo current readings map used by the comparison builder.
+function currentReadings(){
+  var rows=[];
+  $$("#resultsTable tbody tr").forEach(function(tr){
+    var cells=tr.querySelectorAll("td");
+    rows.push({cm:cells[0].textContent,weight:parseNum(cells[5].textContent),volume:parseNum(cells[2].textContent)});
+  });
+  return rows;
+}
+
+$("#createEmbeddedComparison").addEventListener("click",function(){
+  if(!confirmedPrevious){say("Confirme primeiro a produção anterior");return;}
+  var previous=previousProductions[confirmedPrevious.production]||[];
+  var current=currentReadings();
+  var body=$("#embeddedComparisonBody");
+  body.replaceChildren();
+  var plainParts=[];
+  current.forEach(function(reading){
+    var prior=previous.find(function(p){return p.cm===reading.cm;});
+    var tr=document.createElement("tr");
+    tr.innerHTML='<td>'+reading.cm+'</td>'+
+      '<td><strong>'+formatPt(reading.weight)+' g</strong></td>'+
+      '<td>'+(prior?prior.cm:'<em>sem par</em>')+'</td>'+
+      '<td>'+(prior?formatPt(prior.weight)+' g':'—')+'</td>'+
+      '<td>'+(prior?signed(reading.weight-prior.weight,'g'):'—')+'</td>'+
+      '<td>'+(prior?signed(((reading.weight-prior.weight)/prior.weight)*100,'%'):'—')+'</td>';
+    body.appendChild(tr);
+    if(prior){
+      plainParts.push('CM '+reading.cm+': '+signed(reading.weight-prior.weight,'g'));
+    }else{
+      plainParts.push('CM '+reading.cm+': sem par na base '+confirmedPrevious.production);
+    }
+  });
+  $("#embeddedComparisonResult").classList.add("ready");
+  $("#resultHistory").textContent="Criada com "+confirmedPrevious.production;
+  $("#comparisonPlainRead").textContent="Leitura rápida: "+plainParts.join(" · ")+".";
+  say("Comparação criada por número de CM");
+});
+
+// DEMO ONLY — decision and audit actions.
+function nowString(){
+  return new Date().toLocaleString("pt-PT");
+}
+
+function addAudit(message){
+  var list=$("#auditList");
+  var li=document.createElement("li");
+  li.textContent=message;
+  list.appendChild(li);
+}
+
+$("#saveDraft").addEventListener("click",function(){
+  $("#statusBadge").textContent="Rascunho";
+  $("#statusBadge").className="dmo-pill";
+  say("Rascunho guardado (DEMO ONLY)");
+});
+
+$("#submitControl").addEventListener("click",function(){
+  $("#statusBadge").textContent="Submetido";
+  $("#statusBadge").className="dmo-pill pending";
+  $("#submittedAt").textContent=nowString();
+  say("Controlo submetido para aprovação (DEMO ONLY)");
+});
+
+$("#approveControl").addEventListener("click",function(){
+  $("#statusBadge").textContent="Aprovado";
+  $("#statusBadge").className="dmo-pill approved";
+  $("#approvedBy").textContent="Ana Martins";
+  $("#approvedAt").textContent=nowString();
+  $("#approveMessage").textContent="Aprovado por Ana Martins";
+  addAudit("PESO-001 aprovado em "+nowString()+" por Ana Martins");
+  say("Controlo aprovado (DEMO ONLY)");
+});
+
+$("#rejectControl").addEventListener("click",function(){
+  var reason=$("#rejectionReason").value.trim();
+  if(!reason){say("Indique o motivo da não aprovação");return;}
+  $("#statusBadge").textContent="Não aprovado";
+  $("#statusBadge").className="dmo-pill rejected";
+  addAudit("PESO-001 não aprovado em "+nowString()+" por Ana Martins: "+reason);
+  say("Controlo não aprovado (DEMO ONLY)");
+});
+
+$("#reopenControl").addEventListener("click",function(){
+  $("#statusBadge").textContent="Rascunho";
+  $("#statusBadge").className="dmo-pill";
+  addAudit("PESO-001 reaberto em "+nowString()+" por Ana Martins");
+  say("Controlo reaberto para edição (DEMO ONLY)");
+});
+
+// DEMO ONLY — demo initial averages shown in the live block and result summary.
+$("#avgWater").textContent="151,93 g";
+$("#avgCapacity").textContent="151,93 cm³";
+$("#avgGlass").textContent="230,97 g";
+
+})();
+</script>
+</body>
+</html>

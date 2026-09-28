@@ -1,0 +1,27 @@
+/* Shared current-production rail and date selectors. */
+.beta-production-rail{background:#14334d;color:#fff;padding:17px 12px}
+.beta-production-rail-head{display:grid;gap:3px;padding:0 8px 12px}
+.beta-production-rail-head strong{font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+.beta-production-rail-head span{font-size:11px;color:#bcd3e4}
+.beta-production-lines{display:grid;gap:7px}
+.beta-production-lines button{box-sizing:border-box;display:block;width:100%;height:72px;min-height:72px;margin:0;padding:10px 12px;background:#214963;color:#fff;border:1px solid #42617a;border-radius:8px;text-align:left;font:inherit;cursor:pointer;overflow:hidden}
+.beta-production-lines button:hover,.beta-production-lines button:focus-visible,.beta-production-lines button.active{border-color:#a9d1ed;background:#306389}
+.beta-production-lines strong,.beta-production-lines span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.beta-production-lines strong{font-size:14px;line-height:20px}.beta-production-lines span{font-size:12px;line-height:18px;margin-top:3px;color:#dceaf4}
+.beta-production-lines button:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+.beta-production-calendar-days button,.beta-production-calendar-days .day{aspect-ratio:1;background:#fff;border:1px solid transparent;border-radius:7px;cursor:pointer}
+.beta-production-calendar-days button.has,.beta-production-calendar-days .day.has{font-weight:800;color:#376da1}
+.beta-production-calendar-days button.selected,.beta-production-calendar-days .day.selected{background:#376da1;color:#fff}
+@media(max-width:700px){.beta-production-rail{padding:10px}.beta-production-lines{display:flex;overflow-x:auto}.beta-production-lines button{min-width:145px}}
+/* Boquilhas uses exactly the Job On workspace grid and rail sizing. */
+body[data-beta-page="boquilhas"] .beta-bq-layout{grid-template-columns:230px minmax(0,1fr)}
+body[data-beta-page="boquilhas"] .beta-bq-layout>#bqCurrentLines{position:static;float:none;width:auto;height:auto;min-height:100%;overflow:visible;margin:0}
+body[data-beta-page="boquilhas"] .beta-bq-layout>.main{min-width:0;width:100%;max-width:none;margin:0;padding:22px 26px 36px}
+@media(max-width:700px){body[data-beta-page="boquilhas"] .beta-bq-layout{grid-template-columns:1fr}body[data-beta-page="boquilhas"] .beta-bq-layout>#bqCurrentLines{min-height:0}body[data-beta-page="boquilhas"] .beta-bq-layout>.main{padding:16px}}
+.beta-bq-workflow{margin-top:14px;padding:18px}.beta-bq-workflow h3{margin:0 0 6px}.beta-bq-workflow p{color:#5b7084;margin:4px 0 12px}.beta-bq-matches{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.beta-bq-matches button{border:1px solid #cbd9e6;border-radius:7px;padding:9px;background:white;color:#173850;cursor:pointer}.beta-bq-matches button.active{background:#376da1;color:white}.beta-bq-association{display:grid;gap:6px;max-width:450px}.beta-bq-association select{min-height:38px;border:1px solid #cbd9e6;border-radius:7px}.beta-bq-association small{color:#64778a}.beta-bq-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}.beta-bq-trace-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #cbd9e6}.beta-bq-trace-context{display:grid;gap:4px;padding:12px;margin-bottom:12px;background:#edf4fb;border-left:4px solid #376da1}.beta-bq-trace-context span{color:#5b7084}.beta-bq-notice{border-left:3px solid #376da1;padding:8px 12px;background:#edf4fb}
+body[data-beta-page="boquilhas"] #recordDetail>.card[hidden]{display:none!important}
+.beta-bq-trace-row select{min-height:36px;border:1px solid #cbd9e6;border-radius:7px;background:#fff}
+@media(max-width:720px){.beta-bq-trace-row{align-items:stretch;flex-wrap:wrap}.beta-bq-trace-row span{width:100%}}
+.beta-light-productions .beta-light-production{display:grid;grid-template-columns:46px minmax(0,1fr) auto;min-height:48px;gap:12px;align-items:center;justify-content:normal}
+.beta-light-productions .beta-light-production>strong{color:#193e5e;font-size:14px}.beta-light-productions .beta-light-production>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:700px){.beta-light-productions .beta-light-production{grid-template-columns:38px minmax(0,1fr);gap:4px 10px}.beta-light-productions .beta-light-production>span:last-child{grid-column:2}}

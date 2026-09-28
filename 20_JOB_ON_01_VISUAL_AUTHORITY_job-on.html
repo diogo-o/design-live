@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Consulta · Job On — Portal DMO</title>
+<link rel="stylesheet" href="0_ASSET_CANONICAL_DESIGN_SYSTEM.css">
+<link rel="stylesheet" href="0_ASSET_SHELL.css">
+<link rel="stylesheet" href="beta-adapter.css">
+<link rel="stylesheet" href="beta-production-overview.css">
+<script src="beta-production-overview.js" defer></script>
+<script src="beta-session.js" defer></script>
+<script src="0_ASSET_SHELL.js"></script>
+</head>
+<body data-beta-page="jobon" data-dmo-page="jobon" class="beta-light-page">
+<div data-dmo-shell></div>
+<nav class="dmo-secondary-nav beta-light-tabs" aria-label="Páginas de Planeamento">
+  <button type="button" class="active" data-light-view="jobon">Job On</button>
+  <button type="button" data-light-view="history">Histórico</button>
+</nav>
+<div class="beta-light-layout">
+  <aside class="beta-light-rail beta-production-rail" id="lightLines" aria-label="Linhas de produção"></aside>
+  <main class="beta-light-main" id="lightMain" tabindex="-1">
+    <section class="beta-light-view active" data-light-panel="jobon">
+      <div class="beta-light-heading">
+        <div>
+          <h1>Job On</h1>
+          <p>Selecione uma produção para consultar ou preparar as ferramentas.</p>
+        </div>
+        <a class="dmo-button" href="20_JOB_ON_02_VISUAL_AUTHORITY_job-on-folha.html">Nova produção</a>
+      </div>
+      <div class="beta-light-grid">
+        <section class="dmo-card beta-light-calendar dmo-calendar" aria-label="Calendário de produções">
+          <div class="dmo-calendar__nav">
+            <button class="dmo-calendar__nav-btn" id="lightPreviousMonth" type="button" aria-label="Mês anterior">‹</button>
+            <h2 id="lightMonthTitle">Setembro</h2>
+            <button class="dmo-calendar__nav-btn" id="lightNextMonth" type="button" aria-label="Mês seguinte">›</button>
+          </div>
+          <div class="dmo-calendar__week">
+            <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span>
+          </div>
+          <div id="lightDays" class="dmo-calendar__grid"></div>
+        </section>
+        <section class="dmo-card beta-light-productions">
+          <div class="beta-light-card-head">
+            <div>
+              <h2 id="lightDayTitle">Produções de 21 de setembro</h2>
+              <span>Um clique seleciona; duplo clique abre.</span>
+            </div>
+            <input id="lightSearch" type="search" aria-label="Pesquisar produção" placeholder="Referência ou produção">
+          </div>
+          <div class="dmo-table-wrap">
+            <table class="dmo-table" id="lightProductionTable">
+              <thead>
+                <tr>
+                  <th>Referência</th>
+                  <th>Produção</th>
+                  <th>Máquina</th>
+                </tr>
+              </thead>
+              <tbody id="lightProductionList">
+                <tr data-row data-jobon-id="JOBON-001" data-date="2026-09-21" data-reference="5774T173" data-production="202603" data-line="B1"><td>5774T173</td><td>202603</td><td>B1</td></tr>
+                <tr data-row data-jobon-id="JOBON-002" data-date="2026-09-21" data-reference="5810T188" data-production="202602" data-line="B2"><td>5810T188</td><td>202602</td><td>B2</td></tr>
+                <tr data-row data-jobon-id="JOBON-003" data-date="2026-09-21" data-reference="5447T173" data-production="202602" data-line="B3"><td>5447T173</td><td>202602</td><td>B3</td></tr>
+                <tr data-row data-jobon-id="JOBON-004" data-date="2026-09-21" data-reference="9121T173" data-production="202601" data-line="C1"><td>9121T173</td><td>202601</td><td>C1</td></tr>
+                <tr data-row data-jobon-id="JOBON-005" data-date="2026-09-18" data-reference="7080C002" data-production="202602" data-line="C3"><td>7080C002</td><td>202602</td><td>C3</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p id="lightNoResults" hidden>Sem produções para este dia.</p>
+          <div class="beta-light-actions">
+            <button type="button" class="dmo-button ghost" id="lightRemoveDate" disabled>Retirar do dia</button>
+          </div>
+        </section>
+      </div>
+    </section>
+    <section class="beta-light-view" data-light-panel="history">
+      <div class="beta-light-heading">
+        <div>
+          <h1>Histórico de Job On</h1>
+          <p>Produções sem dia associado.</p>
+        </div>
+      </div>
+      <div class="dmo-card beta-light-history" id="lightHistory">
+        <p id="lightHistoryEmpty">Sem produções desassociadas.</p>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="dmo-toast" id="lightToast" role="status" aria-live="polite"></div>
+<script src="beta-jobon-light.js" defer></script>
+</body>
+</html>

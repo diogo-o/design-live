@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1366">
+<title>Folha de Controlo — Avaliação por peça</title>
+<link rel="stylesheet" href="0_ASSET_CANONICAL_DESIGN_SYSTEM.css">
+<link rel="stylesheet" href="0_ASSET_SHELL.css">
+<style>
+/* Page-specific overrides only; shared layout helpers live in 0_ASSET_CANONICAL_DESIGN_SYSTEM.css. */
+.context-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--dmo-space-2)}
+.decision{border-top:1px solid var(--dmo-border);padding-top:var(--dmo-space-14);margin-top:var(--dmo-space-14)}
+.approved-message{margin-right:auto;color:var(--dmo-success);font-size:var(--dmo-text-md);font-weight:750}
+.audit-log{margin-top:var(--dmo-space-3);padding:var(--dmo-space-3);background:var(--dmo-subtle);border-radius:var(--dmo-r-control)}
+.audit-log h4{margin:0 0 var(--dmo-space-2);font-size:var(--dmo-text-lg)}
+.audit-log ul{margin:0;padding-left:var(--dmo-space-4);color:var(--dmo-muted);font-size:var(--dmo-text-md)}
+[data-mode="create"] [data-approve-only]{display:none}
+[data-mode="approve"] [data-create-only]{display:none}
+/* Piece-evaluation helpers (not generic enough for canonical). */
+.piece-table th,.piece-table td{vertical-align:top}
+.piece-result{display:flex;gap:var(--dmo-space-14);align-items:center}
+.piece-result input[type="radio"]{margin-right:var(--dmo-space-1)}
+.piece-actions{display:flex;align-items:center;gap:var(--dmo-space-10);flex-wrap:wrap}
+.mcaliper-state{color:var(--dmo-muted);font-size:var(--dmo-text-sm)}
+.observation{width:100%;min-height:40px;border:1px solid var(--dmo-border);border-radius:var(--dmo-r-control);background:#fff;color:var(--dmo-text);padding:9px 11px;outline:none;font:inherit}
+</style>
+</head>
+<body class="dmo-page-viewport" data-dmo-page="controlo" data-mode="create">
+<div data-dmo-shell></div>
+<nav class="tabs dmo-secondary-nav" aria-label="Áreas do Controlo">
+<a href="21_CONTROLO_01_VISUAL_AUTHORITY_controlo.html">Controlo</a>
+<a href="22_PESO_OPERADOR_01_VISUAL_AUTHORITY_peso-operador.html">Peso</a>
+<a href="24_PEGAMENTOS_01_VISUAL_AUTHORITY_pegamentos.html">Pegamentos</a>
+<a href="resumo.html">Resumo</a>
+<a class="active" aria-current="page" href="21_CONTROLO_02_VISUAL_AUTHORITY_folha.html">Folha</a>
+</nav>
+
+<main class="dmo-page-main">
+<div class="dmo-page-head">
+<div>
+<h1>Folha de Controlo</h1>
+<p id="pageSubtitle">Avaliação técnica por peça.</p>
+</div>
+<div>
+<span class="dmo-pill" id="statusBadge">Rascunho</span>
+</div>
+</div>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Contexto da produção</h3></div>
+<div class="context-grid" aria-label="Contexto da produção">
+<div class="dmo-summary-item"><span>Referência</span><strong>7080C002</strong></div>
+<div class="dmo-summary-item"><span>Produção</span><strong>202602</strong></div>
+<div class="dmo-summary-item"><span>Máquina</span><strong>C3</strong></div>
+<div class="dmo-summary-item"><span>Job On</span><strong id="jobonDisplay">JOBON-001</strong></div>
+<div class="dmo-summary-item"><span>Revisão</span><strong>3</strong></div>
+<div class="dmo-summary-item"><span>Processo</span><strong>NNPB</strong></div>
+</div>
+<p class="dmo-hint">Âncora jobon_id. PU e CS vêm do contexto Job On/revision; não do Armazém.</p>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Identificação da folha</h3></div>
+<div class="dmo-grid-4">
+<div class="dmo-field"><label for="folhaId">ID da folha</label><input id="folhaId" value="FOLHA-001" readonly aria-readonly="true"></div>
+<div class="dmo-field"><label for="jobonId">Job On</label><input id="jobonId" value="JOBON-001" readonly aria-readonly="true"></div>
+<div class="dmo-field"><label for="folhaDate">Data</label><input id="folhaDate" type="date" value="2026-08-15"></div>
+<div class="dmo-field"><label for="operator">Operador</label><input id="operator" value="João Silva"></div>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head">
+<div>
+<h3>Avaliação por peça</h3>
+<p class="dmo-hint">OK/NOK é avaliação técnica; a decisão de produção é separada e humana.</p>
+</div>
+</div>
+<div class="dmo-table-wrap">
+<table class="dmo-table piece-table">
+<thead>
+<tr><th>Família</th><th>Identificação</th><th>Resultado</th><th>Observação</th><th>MCaliper</th></tr>
+</thead>
+<tbody id="pieceBody">
+<tr data-piece="CM">
+<td><strong>CM</strong></td>
+<td>7080 · Lote 01</td>
+<td>
+<div class="dmo-field piece-result">
+<label><input type="radio" name="result_CM" value="OK" checked> OK</label>
+<label><input type="radio" name="result_CM" value="NOK"> NOK</label>
+</div>
+</td>
+<td><input class="observation" placeholder="Observação" aria-label="Observação CM"></td>
+<td>
+<div class="piece-actions">
+<button class="dmo-button" type="button" data-mcaliper="CM">Associar MCaliper</button>
+<span class="mcaliper-state" id="mcaliperState_CM">Nenhuma ligação</span>
+</div>
+</td>
+</tr>
+<tr data-piece="BQ">
+<td><strong>BQ</strong></td>
+<td>C002 · Lote 518</td>
+<td>
+<div class="dmo-field piece-result">
+<label><input type="radio" name="result_BQ" value="OK" checked> OK</label>
+<label><input type="radio" name="result_BQ" value="NOK"> NOK</label>
+</div>
+</td>
+<td><input class="observation" placeholder="Observação" aria-label="Observação BQ"></td>
+<td>
+<div class="piece-actions">
+<button class="dmo-button" type="button" data-mcaliper="BQ">Associar MCaliper</button>
+<span class="mcaliper-state" id="mcaliperState_BQ">Nenhuma ligação</span>
+</div>
+</td>
+</tr>
+<tr data-piece="MF">
+<td><strong>MF</strong></td>
+<td>7080 · Lote 01</td>
+<td>
+<div class="dmo-field piece-result">
+<label><input type="radio" name="result_MF" value="OK" checked> OK</label>
+<label><input type="radio" name="result_MF" value="NOK"> NOK</label>
+</div>
+</td>
+<td><input class="observation" placeholder="Observação" aria-label="Observação MF"></td>
+<td>
+<div class="piece-actions">
+<button class="dmo-button" type="button" data-mcaliper="MF">Associar MCaliper</button>
+<span class="mcaliper-state" id="mcaliperState_MF">Nenhuma ligação</span>
+</div>
+</td>
+</tr>
+<tr data-piece="PU">
+<td><strong>PU</strong></td>
+<td>7080 · AP7080PA8L-B</td>
+<td>
+<div class="dmo-field piece-result">
+<label><input type="radio" name="result_PU" value="OK" checked> OK</label>
+<label><input type="radio" name="result_PU" value="NOK"> NOK</label>
+</div>
+</td>
+<td><input class="observation" placeholder="Observação" aria-label="Observação PU"></td>
+<td>
+<div class="piece-actions">
+<button class="dmo-button" type="button" data-mcaliper="PU">Associar MCaliper</button>
+<span class="mcaliper-state" id="mcaliperState_PU">Nenhuma ligação</span>
+</div>
+</td>
+</tr>
+<tr data-piece="CS">
+<td><strong>CS</strong></td>
+<td>C002 · 4 × 4</td>
+<td>
+<div class="dmo-field piece-result">
+<label><input type="radio" name="result_CS" value="OK" checked> OK</label>
+<label><input type="radio" name="result_CS" value="NOK"> NOK</label>
+</div>
+</td>
+<td><input class="observation" placeholder="Observação" aria-label="Observação CS"></td>
+<td>
+<div class="piece-actions">
+<button class="dmo-button" type="button" data-mcaliper="CS">Associar MCaliper</button>
+<span class="mcaliper-state" id="mcaliperState_CS">Nenhuma ligação</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-section-head"><h3>Rastreabilidade</h3></div>
+<div class="context-grid">
+<div class="dmo-summary-item"><span>Submetido por</span><strong id="submittedBy">—</strong></div>
+<div class="dmo-summary-item"><span>Data de submissão</span><strong id="submittedAt">—</strong></div>
+<div class="dmo-summary-item"><span>Aprovado por</span><strong id="approvedBy">—</strong></div>
+<div class="dmo-summary-item"><span>Data de aprovação</span><strong id="approvedAt">—</strong></div>
+<div class="dmo-summary-item"><span>Revisão</span><strong>1</strong></div>
+<div class="dmo-summary-item"><span>Estado anterior</span><strong id="previousState">—</strong></div>
+</div>
+<div class="audit-log">
+<h4>Audit log</h4>
+<ul id="auditList">
+<li>FOLHA-001 criado em 15/08/2026 · 09:15 por João Silva</li>
+</ul>
+</div>
+</section>
+
+<section class="dmo-card dmo-card-pad">
+<div class="dmo-actions" data-create-only>
+<button class="dmo-button" id="saveDraft" type="button">Guardar rascunho</button>
+<button class="dmo-button" id="submitFolha" type="button">Submeter</button>
+</div>
+<div class="decision" data-approve-only>
+<div class="dmo-field">
+<label for="rejectionReason">Motivo / alterações necessárias</label>
+<textarea id="rejectionReason" rows="2" placeholder="Obrigatório se não aprovar."></textarea>
+</div>
+<div class="dmo-actions">
+<span class="approved-message" id="approveMessage"></span>
+<button class="dmo-button" id="reopenFolha" type="button">Reabrir</button>
+<button class="dmo-button danger" id="rejectFolha" type="button">Não aprovar</button>
+<button class="dmo-button success" id="approveFolha" type="button">Aprovar</button>
+</div>
+</div>
+</section>
+</main>
+
+<div class="dmo-modal-backdrop" id="mcaliperModal">
+<div class="dmo-modal">
+<div class="dmo-modal-head">
+<div><h2>Ligação MCaliper</h2><p class="dmo-hint">Adicione ou atualize a referência ao ensaio. Nunca importado automaticamente.</p></div>
+<button class="dmo-button dmo-icon-button" data-close type="button">×</button>
+</div>
+<div class="dmo-modal-body">
+<div class="dmo-field">
+<label for="mcaliperReference">ID do ensaio / link MCaliper</label>
+<input id="mcaliperReference" placeholder="Ex.: MC-202602-001">
+</div>
+<p class="dmo-hint" id="mcaliperPieceLabel">Família: —</p>
+</div>
+<div class="dmo-modal-foot">
+<button class="dmo-button" data-close type="button">Cancelar</button>
+<button class="dmo-button" id="saveMcaliper" type="button">Guardar ligação</button>
+</div>
+</div>
+</div>
+
+<div class="dmo-toast" id="toast"></div>
+
+<script src="0_ASSET_SHELL.js"></script>
+<script>
+(function(){
+"use strict";
+
+var params=new URLSearchParams(location.search);
+var isApprove=(params.get("mode")==="approve");
+document.body.setAttribute("data-mode",isApprove?"approve":"create");
+document.title=isApprove?"Folha de Controlo — Aprovação":"Folha de Controlo — Avaliação";
+document.querySelector("#pageSubtitle").textContent=isApprove?"Revisão e decisão da folha.":"Avaliação técnica por peça.";
+
+var toastEl=document.querySelector("#toast");
+var currentMcaliperPiece=null;
+var mcaliperLinks={};
+
+function $(s){return document.querySelector(s);}
+function $$(s){return document.querySelectorAll(s);}
+
+function say(text){
+  toastEl.textContent=text;
+  toastEl.classList.add("show");
+  setTimeout(function(){toastEl.classList.remove("show");},2200);
+}
+
+function nowString(){
+  return new Date().toLocaleString("pt-PT");
+}
+
+function addAudit(message){
+  var li=document.createElement("li");
+  li.textContent=message;
+  $("#auditList").appendChild(li);
+}
+
+function setStatus(text,cls){
+  var badge=$("#statusBadge");
+  badge.textContent=text;
+  badge.className="dmo-pill"+(cls?" "+cls:"");
+}
+
+function collectDraft(){
+  var pieces=["CM","BQ","MF","PU","CS"];
+  var rows=[];
+  pieces.forEach(function(piece){
+    var row=document.querySelector('tr[data-piece="'+piece+'"]');
+    var result=row.querySelector('input[name="result_'+piece+'"]:checked').value;
+    var observation=row.querySelector('.observation').value;
+    rows.push({piece:piece,result:result,observation:observation,mcaliper:mcaliperLinks[piece]||""});
+  });
+  return{
+    folhaId:$("#folhaId").value,
+    jobonId:$("#jobonId").value,
+    date:$("#folhaDate").value,
+    operator:$("#operator").value,
+    status:$("#statusBadge").textContent,
+    statusClass:$("#statusBadge").className.replace("dmo-pill ","").replace("dmo-pill",""),
+    submittedBy:$("#submittedBy").textContent,
+    submittedAt:$("#submittedAt").textContent,
+    approvedBy:$("#approvedBy").textContent,
+    approvedAt:$("#approvedAt").textContent,
+    previousState:$("#previousState").textContent,
+    pieces:rows,
+    mcaliperLinks:Object.assign({},mcaliperLinks)
+  };
+}
+
+function saveDraftToSession(){
+  try{sessionStorage.setItem("dmoFolhaControloDraft",JSON.stringify(collectDraft()));}catch(_){}
+}
+
+function loadDraftFromSession(){
+  try{
+    var raw=sessionStorage.getItem("dmoFolhaControloDraft");
+    if(!raw)return;
+    var draft=JSON.parse(raw);
+    if(draft.folhaId!=="FOLHA-001")return;
+    if(draft.date)$("#folhaDate").value=draft.date;
+    if(draft.operator)$("#operator").value=draft.operator;
+    if(draft.submittedBy)$("#submittedBy").textContent=draft.submittedBy;
+    if(draft.submittedAt)$("#submittedAt").textContent=draft.submittedAt;
+    if(draft.approvedBy)$("#approvedBy").textContent=draft.approvedBy;
+    if(draft.approvedAt)$("#approvedAt").textContent=draft.approvedAt;
+    if(draft.previousState)$("#previousState").textContent=draft.previousState;
+    if(draft.status)setStatus(draft.status,draft.statusClass);
+    if(draft.pieces){
+      draft.pieces.forEach(function(item){
+        var row=document.querySelector('tr[data-piece="'+item.piece+'"]');
+        if(!row)return;
+        var radio=row.querySelector('input[name="result_'+item.piece+'"][value="'+item.result+'"]');
+        if(radio)radio.checked=true;
+        row.querySelector('.observation').value=item.observation||"";
+      });
+    }
+    if(draft.mcaliperLinks){
+      mcaliperLinks=Object.assign({},draft.mcaliperLinks);
+      Object.keys(mcaliperLinks).forEach(function(piece){
+        updateMcaliperState(piece,mcaliperLinks[piece]);
+      });
+    }
+  }catch(_){}
+}
+
+function updateMcaliperState(piece,reference){
+  var state=$("#mcaliperState_"+piece);
+  var btn=document.querySelector('button[data-mcaliper="'+piece+'"]');
+  if(reference){
+    state.textContent="Ligado: "+reference;
+    if(btn)btn.textContent="Atualizar / Abrir MCaliper";
+  }else{
+    state.textContent="Nenhuma ligação";
+    if(btn)btn.textContent="Associar MCaliper";
+  }
+}
+
+function setApproveReadonly(){
+  if(!isApprove)return;
+  $$("input,select,textarea").forEach(function(el){
+    if(!el.hasAttribute("readonly") && el.id!=="rejectionReason"){
+      el.setAttribute("readonly","readonly");
+      el.disabled=true;
+    }
+  });
+}
+
+function openMcaliper(piece){
+  currentMcaliperPiece=piece;
+  $("#mcaliperPieceLabel").textContent="Família: "+piece;
+  $("#mcaliperReference").value=mcaliperLinks[piece]||"";
+  $("#mcaliperModal").classList.add("open");
+}
+
+function closeModals(){
+  document.querySelectorAll(".dmo-modal-backdrop").forEach(function(m){m.classList.remove("open");});
+}
+
+loadDraftFromSession();
+setApproveReadonly();
+
+$$("button[data-mcaliper]").forEach(function(btn){
+  btn.addEventListener("click",function(){openMcaliper(btn.dataset.mcaliper);});
+});
+
+document.querySelectorAll("#mcaliperModal [data-close]").forEach(function(btn){
+  btn.addEventListener("click",closeModals);
+});
+
+$("#saveMcaliper").addEventListener("click",function(){
+  var ref=$("#mcaliperReference").value.trim();
+  if(!currentMcaliperPiece)return;
+  if(!ref){say("Indique a referência do ensaio");return;}
+  mcaliperLinks[currentMcaliperPiece]=ref;
+  updateMcaliperState(currentMcaliperPiece,ref);
+  addAudit(currentMcaliperPiece+" ligado a MCaliper "+ref+" em "+nowString()+" por "+$("#operator").value);
+  saveDraftToSession();
+  closeModals();
+  say("Ligação MCaliper guardada");
+});
+
+$("#saveDraft").addEventListener("click",function(){
+  saveDraftToSession();
+  setStatus("Rascunho","");
+  addAudit("FOLHA-001 guardado como rascunho em "+nowString()+" por "+$("#operator").value);
+  say("Rascunho guardado (DEMO ONLY)");
+});
+
+$("#submitFolha").addEventListener("click",function(){
+  saveDraftToSession();
+  $("#previousState").textContent=$("#statusBadge").textContent;
+  $("#submittedBy").textContent=$("#operator").value;
+  $("#submittedAt").textContent=nowString();
+  setStatus("Submetida","pending");
+  addAudit("FOLHA-001 submetido em "+nowString()+" por "+$("#operator").value);
+  say("Folha submetida para aprovação (DEMO ONLY)");
+});
+
+$("#approveFolha").addEventListener("click",function(){
+  $("#previousState").textContent=$("#statusBadge").textContent;
+  $("#approvedBy").textContent="Ana Martins";
+  $("#approvedAt").textContent=nowString();
+  setStatus("Aprovada","approved");
+  $("#approveMessage").textContent="Aprovado por Ana Martins";
+  addAudit("FOLHA-001 aprovado em "+nowString()+" por Ana Martins");
+  say("Folha aprovada (DEMO ONLY)");
+});
+
+$("#rejectFolha").addEventListener("click",function(){
+  var reason=$("#rejectionReason").value.trim();
+  if(!reason){say("Indique o motivo da não aprovação");return;}
+  $("#previousState").textContent=$("#statusBadge").textContent;
+  setStatus("Rejeitada","rejected");
+  $("#approveMessage").textContent="";
+  addAudit("FOLHA-001 rejeitado em "+nowString()+" por Ana Martins: "+reason);
+  say("Folha rejeitada (DEMO ONLY)");
+});
+
+$("#reopenFolha").addEventListener("click",function(){
+  $("#previousState").textContent=$("#statusBadge").textContent;
+  setStatus("Rascunho","");
+  $("#approveMessage").textContent="";
+  addAudit("FOLHA-001 reaberto em "+nowString()+" por Ana Martins");
+  say("Folha reaberta para edição (DEMO ONLY)");
+});
+
+})();
+</script>
+</body>
+</html>

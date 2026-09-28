@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Folha · Job On — Portal DMO</title>
+<link rel="stylesheet" href="0_ASSET_CANONICAL_DESIGN_SYSTEM.css">
+<link rel="stylesheet" href="0_ASSET_SHELL.css">
+<link rel="stylesheet" href="beta-adapter.css">
+<link rel="stylesheet" href="beta-production-overview.css">
+<script src="beta-production-overview.js" defer></script>
+<script src="beta-session.js" defer></script>
+<script src="0_ASSET_SHELL.js"></script>
+</head>
+<body data-beta-page="jobon" data-dmo-page="jobon" class="beta-light-page">
+<div data-dmo-shell></div>
+<nav class="dmo-secondary-nav beta-light-tabs" aria-label="Páginas de Planeamento">
+  <a href="20_JOB_ON_01_VISUAL_AUTHORITY_job-on.html">Job On</a>
+  <a class="active" aria-current="page" href="20_JOB_ON_02_VISUAL_AUTHORITY_job-on-folha.html">Folha</a>
+</nav>
+<div class="beta-light-layout">
+  <aside class="beta-light-rail beta-production-rail" id="lightLines" aria-label="Linhas de produção"></aside>
+  <main class="beta-light-main" id="lightMain" tabindex="-1">
+    <div class="beta-light-heading">
+      <div>
+        <h1 id="sheetTitle">Novo Job On</h1>
+        <p id="sheetSubtitle">Crie ou edite a associação de ferramentas à produção.</p>
+      </div>
+      <div class="beta-light-actions">
+        <button type="button" class="dmo-button ghost" id="sheetNew">Novo</button>
+        <button type="button" class="dmo-button" id="sheetSave">Guardar</button>
+        <button type="button" class="dmo-button success" id="sheetDuplicate">Duplicar</button>
+      </div>
+    </div>
+
+    <section class="dmo-card beta-light-sheet">
+      <div class="beta-light-sheet-head">
+        <div>
+          <h2>Identidade da produção</h2>
+          <p>Dados que definem o Job On.</p>
+        </div>
+        <span class="dmo-pill" id="sheetStatus">Rascunho</span>
+      </div>
+      <div class="beta-light-fields" id="identityFields">
+        <label>Referência<input id="jReference" required placeholder="Ex.: 5447T173"></label>
+        <label>Produção<input id="jProduction" required placeholder="Ex.: 202603"></label>
+        <label>Máquina/Linha<select id="jMachine"><option>B1</option><option>B2</option><option>B3</option><option>C1</option><option>C2</option><option>C3</option></select></label>
+        <label>Processo<select id="jProcess"><option>NNPB</option><option>PS</option><option>PB</option><option>BB</option></select></label>
+        <label>Início<input id="jStart" type="date"></label>
+        <label>Fim<input id="jEnd" type="date"></label>
+      </div>
+    </section>
+
+    <section class="dmo-card beta-light-sheet">
+      <div class="beta-light-sheet-head">
+        <div>
+          <h2>Ferramentas</h2>
+          <p>Selecione uma ferramenta para cada contexto.</p>
+        </div>
+      </div>
+      <div class="beta-light-tools" id="toolsSection">
+        <div class="beta-light-tool" data-tool-type="CM">
+          <h3>CM</h3>
+          <input id="cmDisplay" readonly placeholder="Sem ferramenta selecionada">
+          <div class="beta-light-tool-result" id="cmSummary" hidden></div>
+          <button type="button" class="dmo-button" id="cmPick">Selecionar</button>
+        </div>
+        <div class="beta-light-tool" data-tool-type="MF">
+          <h3>MF</h3>
+          <input id="mfDisplay" readonly placeholder="Sem ferramenta selecionada">
+          <div class="beta-light-tool-result" id="mfSummary" hidden></div>
+          <button type="button" class="dmo-button" id="mfPick">Selecionar</button>
+        </div>
+        <div class="beta-light-tool" data-tool-type="BQ">
+          <h3>BQ</h3>
+          <input id="bqDisplay" readonly placeholder="Sem ferramenta selecionada">
+          <div class="beta-light-tool-result" id="bqSummary" hidden></div>
+          <button type="button" class="dmo-button" id="bqPick">Selecionar</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="dmo-card beta-light-sheet">
+      <div class="beta-light-sheet-head">
+        <div>
+          <h2>Notas da produção</h2>
+        </div>
+      </div>
+      <div class="dmo-field">
+        <textarea id="jNotes" rows="3" placeholder="Observações da produção..."></textarea>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="dmo-modal-backdrop" id="toolPicker" hidden>
+  <div class="dmo-modal" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+    <div class="dmo-modal-head">
+      <h2 id="pickerTitle">Selecionar ferramenta</h2>
+      <button type="button" class="dmo-icon-button" id="pickerClose" aria-label="Fechar">×</button>
+    </div>
+    <div class="dmo-modal-body">
+      <div class="dmo-field">
+        <input id="pickerSearch" type="search" placeholder="Referência, lote ou tipo">
+      </div>
+      <div class="dmo-table-wrap">
+        <table class="dmo-table" id="pickerTable">
+          <thead>
+            <tr><th>Tipo</th><th>Referência</th><th>Lote</th><th>Máquinas</th><th>Processo</th></tr>
+          </thead>
+          <tbody id="pickerBody"></tbody>
+        </table>
+      </div>
+      <p id="pickerEmpty" hidden>Sem resultados.</p>
+      <div class="beta-light-actions">
+        <button type="button" class="dmo-button" id="pickerCreate">Criar ferramenta</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dmo-modal-backdrop" id="createToolModal" hidden>
+  <div class="dmo-modal" role="dialog" aria-modal="true" aria-labelledby="createToolTitle">
+    <div class="dmo-modal-head">
+      <h2 id="createToolTitle">Criar ferramenta</h2>
+      <button type="button" class="dmo-icon-button" id="createToolClose" aria-label="Fechar">×</button>
+    </div>
+    <div class="dmo-modal-body">
+      <div class="beta-tool-grid" id="createToolGrid">
+        <div class="dmo-field">
+          <label for="ctType">Tipo</label>
+          <select id="ctType"><option>CM</option><option>MF</option><option>BQ</option></select>
+        </div>
+        <div class="dmo-field">
+          <label for="ctReference">Referência</label>
+          <input id="ctReference" required placeholder="Ex.: T132">
+        </div>
+        <div class="dmo-field">
+          <label for="ctLot">Lote</label>
+          <input id="ctLot" required placeholder="Ex.: 04">
+        </div>
+        <div class="dmo-field">
+          <label for="ctProcess">Processo</label>
+          <select id="ctProcess"><option value="">—</option><option>NNPB</option><option>PS</option><option>PB</option><option>BB</option></select>
+        </div>
+        <div class="dmo-field wide">
+          <label>Máquinas compatíveis</label>
+          <div class="beta-machine-grid" id="ctMachines">
+            <label class="beta-machine-choice"><input type="checkbox" value="B1">B1</label>
+            <label class="beta-machine-choice"><input type="checkbox" value="B2">B2</label>
+            <label class="beta-machine-choice"><input type="checkbox" value="B3">B3</label>
+            <label class="beta-machine-choice"><input type="checkbox" value="C1">C1</label>
+            <label class="beta-machine-choice"><input type="checkbox" value="C2">C2</label>
+            <label class="beta-machine-choice"><input type="checkbox" value="C3">C3</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dmo-modal-foot">
+      <button type="button" class="dmo-button ghost" id="createToolCancel">Cancelar</button>
+      <button type="button" class="dmo-button" id="createToolSave">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="dmo-modal-backdrop" id="duplicateModal" hidden>
+  <div class="dmo-modal" role="dialog" aria-modal="true" aria-labelledby="duplicateTitle">
+    <div class="dmo-modal-head">
+      <h2 id="duplicateTitle">Duplicar Job On</h2>
+      <button type="button" class="dmo-icon-button" id="duplicateClose" aria-label="Fechar">×</button>
+    </div>
+    <div class="dmo-modal-body">
+      <div class="dmo-field">
+        <label for="duplicateSource">Fonte</label>
+        <select id="duplicateSource"></select>
+      </div>
+      <div class="dmo-card" id="duplicatePreview" hidden>
+        <p class="beta-light-empty">Selecione uma fonte para ver o preview.</p>
+      </div>
+    </div>
+    <div class="dmo-modal-foot">
+      <button type="button" class="dmo-button ghost" id="duplicateCancel">Cancelar</button>
+      <button type="button" class="dmo-button" id="duplicateConfirm">Criar rascunho</button>
+    </div>
+  </div>
+</div>
+
+<div class="dmo-toast" id="sheetToast" role="status" aria-live="polite"></div>
+<script src="beta-jobon-folha.js" defer></script>
+</body>
+</html>

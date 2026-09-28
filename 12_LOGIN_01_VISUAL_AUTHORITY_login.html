@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Entrar — Portal DMO</title>
+<link rel="stylesheet" href="0_ASSET_CANONICAL_DESIGN_SYSTEM.css">
+<script src="beta-session.js" defer></script>
+</head>
+<body class="dmo-login-page" data-beta-page="login">
+<main class="dmo-login">
+  <section class="dmo-login-brand">
+    <img class="dmo-login-logo" src="0_ASSET_LOGO.png" alt="BA Glass">
+    <div class="dmo-login-brand-copy">
+      <span class="dmo-login-eyebrow">BA Glass</span>
+      <h1>Portal DMO</h1>
+      <p>Digital Mold Operations</p>
+    </div>
+  </section>
+  <section class="dmo-login-panel">
+    <form class="dmo-login-form" id="loginForm" novalidate>
+      <h2>Entrar</h2>
+      <p class="dmo-login-lead">Escolha o identificador e introduza a palavra-passe.</p>
+      <div class="dmo-login-toggle" role="group" aria-label="Tipo de identificador">
+        <button type="button" class="dmo-button" id="idTypeEmail" aria-pressed="true">E-mail</button>
+        <button type="button" class="dmo-button" id="idTypeNumber" aria-pressed="false">Número de funcionário</button>
+      </div>
+      <div class="dmo-field" id="emailField" aria-hidden="false">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" autocomplete="username" placeholder="nome@empresa.com">
+      </div>
+      <div class="dmo-field" id="numberField" hidden aria-hidden="true">
+        <label for="number">Número de funcionário</label>
+        <input id="number" type="text" inputmode="numeric" pattern="[0-9]+" autocomplete="off" placeholder="Ex.: 12345">
+      </div>
+      <div class="dmo-field">
+        <label for="password">Palavra-passe</label>
+        <div class="dmo-login-password">
+          <input id="password" type="password" autocomplete="current-password" required>
+          <button class="dmo-button" id="passwordToggle" type="button" aria-label="Mostrar palavra-passe" aria-pressed="false">Mostrar</button>
+        </div>
+      </div>
+      <button class="dmo-button dmo-login-submit" id="submitButton" type="submit">Entrar</button>
+      <div class="dmo-login-message" id="formMessage" role="alert" aria-live="polite"></div>
+    </form>
+  </section>
+</main>
+<script>
+function initLogin(){
+  const form=document.querySelector('#loginForm');
+  const emailField=document.querySelector('#emailField');
+  const numberField=document.querySelector('#numberField');
+  const emailInput=document.querySelector('#email');
+  const numberInput=document.querySelector('#number');
+  const passwordInput=document.querySelector('#password');
+  const passwordToggle=document.querySelector('#passwordToggle');
+  const idTypeEmail=document.querySelector('#idTypeEmail');
+  const idTypeNumber=document.querySelector('#idTypeNumber');
+  const message=document.querySelector('#formMessage');
+
+  function setType(type){
+    const isEmail=type==='email';
+    idTypeEmail.setAttribute('aria-pressed',String(isEmail));
+    idTypeNumber.setAttribute('aria-pressed',String(!isEmail));
+    emailField.hidden=!isEmail;
+    numberField.hidden=isEmail;
+    emailField.setAttribute('aria-hidden',String(!isEmail));
+    numberField.setAttribute('aria-hidden',String(isEmail));
+    if(isEmail){
+      emailInput.required=true;
+      numberInput.required=false;
+      numberInput.value='';
+      emailInput.focus();
+    }else{
+      emailInput.required=false;
+      numberInput.required=true;
+      emailInput.value='';
+      numberInput.focus();
+    }
+    message.classList.remove('show');
+  }
+
+  idTypeEmail.onclick=()=>setType('email');
+  idTypeNumber.onclick=()=>setType('number');
+
+  passwordToggle.onclick=()=>{
+    const show=passwordInput.type==='password';
+    passwordInput.type=show?'text':'password';
+    passwordToggle.textContent=show?'Ocultar':'Mostrar';
+    passwordToggle.setAttribute('aria-pressed',String(show));
+    passwordToggle.setAttribute('aria-label',show?'Ocultar palavra-passe':'Mostrar palavra-passe');
+  };
+
+  function showMessage(text,kind){
+    message.textContent=text;
+    message.className='dmo-login-message'+(kind==='info'?' info':'')+' show';
+  }
+
+  form.onsubmit=e=>{
+    e.preventDefault();
+    const email=emailInput.value.trim();
+    const number=numberInput.value.trim();
+    const password=passwordInput.value;
+
+    if(email&&number){
+      showMessage('Utilize apenas um identificador de cada vez.','info');
+      return;
+    }
+
+    const identifier=email||number;
+    if(!identifier||!password){
+      showMessage('Preencha o identificador e a palavra-passe.');
+      return;
+    }
+
+    const account=window.betaDemoSession?.resolve(identifier);
+    if(!account||!window.betaDemoSession?.verifyPassword(password)){
+      showMessage('Identificador ou palavra-passe incorretos. Verifique as credenciais e tente novamente.');
+      return;
+    }
+
+    window.betaDemoSession.set(account.number);
+    location.href=account.home;
+  };
+
+  setType('email');
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initLogin);
+}else{
+  initLogin();
+}
+</script>
+</body>
+</html>

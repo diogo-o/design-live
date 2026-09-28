@@ -1,0 +1,22 @@
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const $=(s,r=document)=>r.querySelector(s);
+const toast=(message)=>{const el=$("#toast");el.textContent=message;el.classList.add("is-visible");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("is-visible"),2600)};
+function showView(view){$$('.view').forEach(x=>x.classList.toggle('is-active',x.dataset.page===view));$$('.nav-item').forEach(x=>x.classList.toggle('is-active',x.dataset.view===view));history.replaceState(null,'',`#${view}`);$('#main').focus()}
+$$('.nav-item').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+$('.go-control').addEventListener('click',()=>showView('controlo'));$('.go-bq').addEventListener('click',()=>showView('boquilhas'));
+$$('.production-row').forEach(row=>row.addEventListener('click',()=>{$$('.production-row').forEach(x=>x.classList.remove('is-selected'));row.classList.add('is-selected');$('#prodNumber').textContent=row.dataset.prod;toast(`Produção ${row.dataset.prod} selecionada explicitamente`)}));
+$('#jobSearch').addEventListener('click',()=>{$('#jobSearchNote').textContent=`3 produções encontradas para ${$('#jobRef').value.trim()||'a referência'}`;toast('Pesquisa concluída — nenhuma produção foi aberta automaticamente')});
+$('#newJobBtn').addEventListener('click',()=>toast('Modo de criação aberto no mesmo espaço de trabalho'));$('#duplicateBtn').addEventListener('click',()=>toast('Escolha uma produção na lista antes de iniciar a duplicação'));
+$$('[data-control-tab]').forEach(b=>b.addEventListener('click',()=>{$$('[data-control-tab]').forEach(x=>x.classList.remove('is-active'));b.classList.add('is-active');$$('.control-tab').forEach(x=>x.classList.toggle('is-active',x.id===`tab-${b.dataset.controlTab}`))}));
+$$('[data-control-mode]').forEach(b=>b.addEventListener('click',()=>{$$('[data-control-mode]').forEach(x=>x.classList.remove('is-active'));b.classList.add('is-active');toast(b.dataset.controlMode==='approve'?'Modo de revisão: dados submetidos ficam só de leitura':'Modo de criação: edição disponível')}));
+function renumber(){$$('#measurementBody tr').forEach((r,i)=>{r.cells[0].textContent=i+1;r.cells[1].textContent=String(i+1).padStart(2,'0')})}
+$('#addMeasurement').addEventListener('click',()=>{const body=$('#measurementBody');const row=body.rows[body.rows.length-1].cloneNode(true);$$('input',row).forEach(i=>i.value='');body.append(row);renumber();row.querySelector('input').focus()});
+$('#measurementBody').addEventListener('click',e=>{if(!e.target.closest('.remove-row'))return;const rows=$$('#measurementBody tr');if(rows.length===1){toast('É necessário manter pelo menos uma medição');return}e.target.closest('tr').remove();renumber()});
+$('#submitPeso').addEventListener('click',()=>{$('#pesoState').textContent='Submetido para aprovação agora';toast('Peso submetido — os avisos não decidiram a aprovação')});
+$('#choosePrevious').addEventListener('click',()=>{const next=$('#previousPeso').textContent.startsWith('202512')?'202411 · 04/11/2025':'202512 · 11/08/2026';$('#previousPeso').textContent=next;toast('Peso anterior alterado por seleção explícita')});
+$$('[data-movement]').forEach(b=>b.addEventListener('click',()=>{$$('[data-movement]').forEach(x=>x.classList.remove('is-active'));b.classList.add('is-active');$('#repairerField').hidden=b.dataset.movement!=='Saída';$('#saveMovement').textContent=`Registar ${b.dataset.movement}`}));
+$('#saveMovement').addEventListener('click',()=>{$('#movementState').textContent='Movimento registado · auditoria 23/09/2026 10:18';toast('Movimento guardado sem alterar a data operacional')});
+const dialog=$('#toolDialog');$$('.tool-open').forEach(b=>b.addEventListener('click',()=>{$('#toolDialogType').textContent=b.dataset.tool;$$('.candidate .tool-type').forEach(x=>x.textContent=b.dataset.tool);dialog.showModal()}));
+$$('.candidate').forEach(c=>c.addEventListener('click',()=>{$$('.candidate').forEach(x=>x.classList.remove('is-selected'));c.classList.add('is-selected')}));
+$('#toolSearchBtn').addEventListener('click',()=>toast('2 candidatas encontradas — selecione uma'));$('#createTool').addEventListener('click',()=>toast('O fluxo de criação preserva o rascunho de origem'));$('#confirmTool').addEventListener('click',()=>toast('Ferramenta confirmada e devolvida ao fluxo de origem'));
+const initial=location.hash.slice(1);if(['jobon','controlo','boquilhas'].includes(initial))showView(initial);
